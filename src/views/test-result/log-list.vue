@@ -22,7 +22,7 @@
             </div>
             
            <div>
-                <el-tree class="filter-tree" :data="logTree" :props="defaultProps" 
+                <el-tree class="filter-tree" :data="logTree" :props="defaultProps" id="tree"  
                     default-expand-all highlight-current :filter-node-method="filterNode"  
                     ref="tree" style="margin-top:10px"  show-checkbox @node-click="findLogByFileName"
                     @check-change="handleCheckChange">
@@ -143,7 +143,14 @@ export default{
 .el-tree{
     height: 640px;
     font-size: 800;
+    overflow:scroll  
 }
+
+/* .el-tree>.el-tree-node {
+  display: inline-block;
+  min-width: 100%;
+} */
+
 #card3{
     height: 793px; 
 }

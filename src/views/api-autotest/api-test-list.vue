@@ -64,7 +64,7 @@
                 <span style="font-size:small;margin-left: 50px;">已勾选用例数:</span>
                 <span  style="font-size:small;font-weight:700; color:brown">{{ selectCaseList.length }}</span>
             </div>
-            <el-table :header-cell-style="{'text-align':'center'}"  :data="apiCaseList" border style="width: 100%;margin-top: 10px;" @selection-change="caseTablehandleSelectionChange">
+            <el-table :header-cell-style="{'text-align':'center'}"  :data="apiCaseList" border max-height="800" style="width: 100%;margin-top: 10px;" @selection-change="caseTablehandleSelectionChange">
                 <el-table-column type="selection" width="" fixed ref="selectCases"> </el-table-column>
                 <el-table-column prop="caseNumber" label="用例编号" width="80" align=center></el-table-column>
                 <el-table-column prop="caseName" label="用例名称" width="260" align=center></el-table-column>

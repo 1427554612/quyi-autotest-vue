@@ -153,7 +153,7 @@
     <div id="open-dialog">
         <el-dialog title="关联测试用例" :visible.sync="relevanceIsShow">
           <div style="height: 50%; ">
-              <el-table :data="allJobs" border="true" height="300" @selection-change="handleSelectionChange">
+              <el-table :data="allJobs" border="true" max-height="300" @selection-change="handleSelectionChange">
                   <el-table-column type="selection"></el-table-column>
                   <el-table-column prop="caseName" label="用例名称"></el-table-column>
               </el-table>
@@ -170,7 +170,7 @@
     <div id="open-dialog">
         <el-dialog title="关联执行配置" :visible.sync="relevanceConfigIsShow">
           <div style="height: 50%; ">
-              <el-table :data="allConfigs" border="true" height="300" @selection-change="handleSelectionConfigChange">
+              <el-table :data="allConfigs" border="true" max-height="300" @selection-change="handleSelectionConfigChange">
                   <el-table-column fixed type="selection"></el-table-column>
                   <el-table-column prop="configId" label="配置id"></el-table-column>
                   <el-table-column prop="configName" label="配置名称"></el-table-column>
