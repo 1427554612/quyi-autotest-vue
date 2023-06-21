@@ -123,12 +123,19 @@ export const constantRoutes = [
     name: '结果管理',
     meta: { title: '结果管理', icon: 'el-icon-s-help' },
     children: [
-      // {
-      //   path: '/result-list',
-      //   name: '结果管理',
-      //   component: () => import('@/views/test-result/result-list'),
-      //   meta: { title: '结果管理', icon: 'table' }
-      // },
+      {
+        path: '/result-list',
+        name: '结果管理',
+        component: () => import('@/views/test-result/result-list'),
+        meta: { title: '结果管理', icon: 'table' }
+      },
+      {
+        path: '/result-info-list/:result_id',
+        name: '结果详情',
+        component: () => import('@/views/test-result/result-info-list'),
+        meta: { title: '结果详情', icon: 'table' },
+        hidden:true
+      },
       {
         path: '/log-list',
         name: '日志管理',

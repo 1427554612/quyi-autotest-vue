@@ -63,6 +63,10 @@ export default {
                   x: 'left',
                   data: ['A', 'B', 'C', 'D', 'E']
                 },
+                title:{
+                  left: 'center',
+                  top: 'center'
+                },
                 series: [
                   {
                     type: 'pie',
@@ -82,12 +86,13 @@ export default {
                         fontWeight: 'bold'
                       }
                     },
+                    radius: ['50%', '70%'],
                     data: [
-                      { value: 335, name: 'A' },
-                      { value: 310, name: 'B' },
-                      { value: 234, name: 'C' },
-                      { value: 135, name: 'D' },
-                      { value: 1548, name: 'E' }
+                      { value: 20, name: 'A' },
+                      { value: 20, name: 'B' },
+                      { value: 10, name: 'C' },
+                      { value: 30, name: 'D' },
+                      { value: 20, name: 'E' }
                     ]
                   }
                 ]
