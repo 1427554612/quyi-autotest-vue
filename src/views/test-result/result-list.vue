@@ -8,7 +8,7 @@
 
                 <!--统计图 -->
                 <div style="float:left;width: 45%;border: 1px solid red;height: 750px;">
-                    
+                    <div id="charts1" style="width: 95%;height: 400px;float: left;"></div>
                 </div>
                 
 
@@ -62,6 +62,9 @@
 </template>
 <script>
 import testResultApi from '@/api/test-result/testResultApi';
+import * as echarts from 'echarts';
+import chartsApi from '@/api/test-result/chartsApi';
+
 export default{
     data(){
         return {
@@ -71,17 +74,77 @@ export default{
                 case_name:""
             },
             resultList:[],
+            charts1:{
+                legends:[],
+                series:[]
+            }
         }
     },
     created(){
         this.findResult();
+        this.loadChartData1()
     },
+    // beforeUpdate(){
+    //     this.initDashboard(); 
+    //     this.initDashboard()
+    // },
     methods:{
         // 查询列表
         findResult(){
             testResultApi.findResult().then(response=>{
                 this.resultList = response.data.list
             })
+        },
+
+        // 获取用例执行率
+        loadChartData1(){
+            chartsApi.getCaseSuccessRate().then(response=>{
+                this.charts1.legends = response.data.legends;
+                this.charts1.series = response.data.series;
+                console.log("getCaseSuccessRate is run ")
+                console.log(this.charts1.legends)
+                this.initDashboard()
+            })
+        },
+        initDashboard(){
+            console.log("initDashboard is run ...")
+             // 饼图
+             echarts.init(document.getElementById('charts1')).setOption({
+                legend: {
+                  orient: 'vertical',
+                  x: 'left',
+                  data: this.charts1.legends
+                },
+                title:{
+                  left: '50%',
+                  top: 'top',
+                  text:"成功率统计"
+                },
+                series: [
+                  {
+                    type: 'pie',
+                    radius: ['50%', '70%'],
+                    center:['55%','50%'],
+                    avoidLabelOverlap: false,
+                    label: {
+                      show: false,
+                      position: 'center'
+                    },
+                    labelLine: {
+                      show: false
+                    },
+                    emphasis: {
+                      label: {
+                        show: true,
+                        fontSize: '30',
+                        fontWeight: 'bold'
+                      }
+                    },
+                    radius: ['50%', '70%'],
+                    data:this.charts1.series
+                  }
+                ]
+            });
         }
     }
 
