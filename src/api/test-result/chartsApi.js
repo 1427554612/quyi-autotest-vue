@@ -8,5 +8,13 @@ export default{
             url:"/api/test_result/charts/getCaseSuccessRate",
             method:"get"
         })
+    },
+
+    // 统计测试平台所有成功和失败数
+    getPlatformSuccessAndErrorNum(){
+        return request({
+            url:"/api/test_result/charts/getPlatformSuccessAndErrorNum",
+            method:"get"
+        })  
     }
 }

@@ -2,10 +2,12 @@ import request from "@/utils/request"
 
 export default{
 
-    findResult(){
+    // 分页查询
+    findResult(current,size,resultQueryVo){
         return request({
-            url:"/api/test_result/findResult",
-            method:"get"
+            url:`/api/test_result/findResult/${current}/${size}`,
+            method:"post",
+            data:resultQueryVo
         })
     }
 }
