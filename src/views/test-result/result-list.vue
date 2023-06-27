@@ -107,13 +107,18 @@ export default{
                 keys:[],
                 successNums:[],
                 errorNums:[]
+            },
+            charts3:{
+                legends:[],
+                series:[]
             }
         }
     },
     created(){
         this.findResult();
-        this.loadChartData1()
-        this.loadChartData2()
+        this.loadChartData1();
+        this.loadChartData2();
+        this.loadChartData3();
     },
     methods:{
         // 充值搜索框
@@ -260,6 +265,67 @@ export default{
                         }
                     ] 
                 })
+            })
+        },
+        // 初始化统计表3
+        loadChartData3(){
+            chartsApi.getCurrentSuccessAndErrorNum().then(response=>{
+                this.charts3.legends = response.data.legends;
+                this.charts3.series = response.data.series;
+                // 饼图
+                echarts.init(document.getElementById('charts3')).setOption({
+                    legend: {
+                        orient: 'vertical',
+                        x: 'left',
+                        data: this.charts3.legends
+                    },
+                    title:{
+                        left: '42%',
+                        top: '0px',
+                        text:"当前执行用例结果统计"
+                    },
+                    series: [
+                    {
+                        type: 'pie',
+                        radius: ['10%', '50%'],
+                        center:['55%','50%'],
+                        avoidLabelOverlap: false,
+                        label: {
+                        show: false,
+                        position: 'center'
+                        },
+                        labelLine: {
+                        show: false
+                        },
+                        emphasis: {
+                        label: {
+                            show: true,
+                            fontSize: '30',
+                            fontWeight: 'bold'
+                        }
+                        },
+                        radius: ['80%', '50%'],
+                        data:this.charts3.series,
+                        itemStyle: {
+                            　　normal: {
+                                　　　　label: {
+                                　　　　　　show:true,//是否显示 
+                                　　　　　　position: 'top',//显示位置
+                                           textStyle: { //文字样式
+                            　　　　        }, 
+                                　　　　formatter: function(params) {//核心部分 formatter 可以为字符串也可以是回调 
+                                　　　　　　if(params.value){//如果当前值存在则拼接
+                                　　　　　　　　return params.value
+                                　　　　　　}else{//否则返回个空
+                                　　　　　　　　return '';
+                                　　　　　　}
+                                　　　　}
+                                　　}
+                            　　}
+                            }
+                        }
+                    ]
+                });
             })
         }
 

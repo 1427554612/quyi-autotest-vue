@@ -16,5 +16,13 @@ export default{
             url:"/api/test_result/charts/getPlatformSuccessAndErrorNum",
             method:"get"
         })  
+    },
+
+    // 统计当前成功和失败的用例数
+    getCurrentSuccessAndErrorNum(){
+        return request({
+            url:"/api/test_result/charts/getCurrentSuccessAndErrorNum",
+            method:"get"
+        })  
     }
 }
