@@ -60,6 +60,7 @@
                                 <el-table-column prop="run_success_num" label="成功总数" width="100"> </el-table-column>
                                 <el-table-column prop="run_error_num" label="失败总数" width="100"> </el-table-column>
                                 <el-table-column prop="run_success_rate" label="执行成功率" width="100"> </el-table-column>
+                                <el-table-column prop="last_run_result" label="最近执行结果" width="180"> </el-table-column>
                                 <el-table-column prop="last_run_date" label="最近执行时间" width="180"> </el-table-column>
                                 <el-table-column prop="last_run_time" label="最近执行耗时" width="120"> </el-table-column>
                             </el-table>
@@ -115,6 +116,11 @@ export default{
         this.loadChartData2()
     },
     methods:{
+        // 充值搜索框
+        resetting(){
+            this.resultQueryVo = {}
+            this.findResult()
+        },
         // 查询列表
         findResult(current = 1){
             this.current = current;
@@ -140,7 +146,7 @@ export default{
                     },
                     title:{
                         left: '48%',
-                        top: 'top',
+                        top: 'center',
                         text:"成功率统计"
                     },
                     series: [
@@ -164,7 +170,24 @@ export default{
                         }
                         },
                         radius: ['50%', '70%'],
-                        data:this.charts1.series
+                        data:this.charts1.series,
+                        itemStyle: {
+                            　　normal: {
+                                　　　　label: {
+                                　　　　　　show:true,//是否显示 
+                                　　　　　　position: 'top',//显示位置
+                                           textStyle: { //文字样式
+                            　　　　        }, 
+                                　　　　formatter: function(params) {//核心部分 formatter 可以为字符串也可以是回调 
+                                　　　　　　if(params.value){//如果当前值存在则拼接
+                                　　　　　　　　return params.value
+                                　　　　　　}else{//否则返回个空
+                                　　　　　　　　return '';
+                                　　　　　　}
+                                　　　　}
+                                　　}
+                            　　}
+                            }
                     }
                     ]
                 });
@@ -201,7 +224,7 @@ export default{
                             　　　　        }, 
                                 　　　　formatter: function(params) {//核心部分 formatter 可以为字符串也可以是回调 
                                 　　　　　　if(params.value){//如果当前值存在则拼接
-                                　　　　　　　　return params.value + '%' 
+                                　　　　　　　　return params.value 
                                 　　　　　　}else{//否则返回个空
                                 　　　　　　　　return '';
                                 　　　　　　}
@@ -225,7 +248,7 @@ export default{
                             　　　　        }, 
                                 　　　　formatter: function(params) {//核心部分 formatter 可以为字符串也可以是回调 
                                 　　　　　　if(params.value){//如果当前值存在则拼接
-                                　　　　　　　　return params.value + '%' 
+                                　　　　　　　　return params.value
                                 　　　　　　}else{//否则返回个空
                                 　　　　　　　　return '';
                                 　　　　　　}
