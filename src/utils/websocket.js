@@ -13,7 +13,6 @@ export default class SocketService {
     connected = false; // 标识是否连接成功
     sendRetryCount = 0; // 记录重试的次数
     connectRetryCount = 0; // 重新连接尝试的次数
-    datas = [];            // 数据
     
     //单例模式保证只有一个SocketService实例
     static get Instance() {

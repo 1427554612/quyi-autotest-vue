@@ -10,6 +10,15 @@ export default{
         })
     },
 
+    // 编辑所有接口
+    editAllCase:function(apiTestCase){
+        return request({
+            url:"/api/api-autotest/editCase",
+            method:"put",
+            data:apiTestCase
+        })
+    },
+
     // 上传接口
     fileUpload:function(formData){
         return request({

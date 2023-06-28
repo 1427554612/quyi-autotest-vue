@@ -96,6 +96,12 @@ export const constantRoutes = [
         name: '接口用例列表',
         component: () => import('@/views/api-autotest/api-test-list'),
         meta: { title: '接口用例列表', icon: 'table' }
+      },
+      {
+        path: '/api-test-edit',
+        name: '编辑测试用例',
+        component: () => import('@/views/api-autotest/api-test-edit'),
+        meta: { title: '编辑测试用例', icon: 'table' }
       }
     ]
   },
@@ -154,6 +160,30 @@ export const constantRoutes = [
         name: 'Form',
         component: () => import('@/views/form/index'),
         meta: { title: 'Form', icon: 'form' }
+      }
+    ]
+  },
+  {
+    path: '/demo',
+    component: Layout,
+    children: [
+      {
+        path: 'demo',
+        name: '测试',
+        component: () => import('@/views/demo/demo'),
+        meta: { title: '测试', icon: 'form' }
+      },
+      {
+        path: 'demo2',
+        name: '测试',
+        component: () => import('@/views/demo/demo2'),
+        meta: { title: '测试', icon: 'form' }
+      },
+      {
+        path: 'demo3',
+        name: '测试',
+        component: () => import('@/views/demo/demo3'),
+        meta: { title: '测试', icon: 'form' }
       }
     ]
   },

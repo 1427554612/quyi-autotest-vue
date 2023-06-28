@@ -50,7 +50,7 @@
                     <el-button style="margin;" slot="trigger"  type="primary">选取文件</el-button>
                     <el-button style="margin-left: 20px; "  type="success" @click="submitUpload">上传文件</el-button>
                     <el-button style="float:right;margin-right: 5px"  type="success" icon="el-icon-caret-right" @click="openConfigDiglog(selectCaseList)">批量执行</el-button>
-                    <el-button style="float:right;"  type="primary" >添加用例</el-button>
+                    <el-button style="float:right;"  type="primary" @click="gotoEditCase()">编辑用例</el-button>
                     <el-button style="float:right;"  type="success" @click="downloadCaseFile" >下载测试用例</el-button>
                 </el-upload>
             </div>     
@@ -417,6 +417,12 @@ export default {
         handleExceed(files, fileList) {
             // this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
             this.$message.warning(`当前限制选择 1 个文件！`);
+        },
+
+        // ---------------------------------------------------------------------------------------------------
+        // 跳转添加页面
+        gotoEditCase(){
+            this.$router.push({path:'/api-test-edit'})
         }
 
 
