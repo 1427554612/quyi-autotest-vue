@@ -59,8 +59,15 @@
                                 <el-table-column prop="run_num" label="执行总数" width="100"> </el-table-column>
                                 <el-table-column prop="run_success_num" label="成功总数" width="100"> </el-table-column>
                                 <el-table-column prop="run_error_num" label="失败总数" width="100"> </el-table-column>
-                                <el-table-column prop="run_success_rate" label="执行成功率" width="100"> </el-table-column>
-                                <el-table-column prop="last_run_result" label="最近执行结果" width="180"> </el-table-column>
+                                <el-table-column prop="run_success_rate" label="执行成功率" width="100">
+                                    <template slot-scope="scope">{{ scope.row.run_success_rate }}%</template>
+                                </el-table-column>
+                                <el-table-column prop="last_run_result" label="最近执行结果" width="180"> 
+                                    <template slot-scope="scope">
+                                       <span style="color:green" v-if=" scope.row.last_run_result ==true">{{ scope.row.last_run_result }}</span>
+                                       <span style="color:red" v-if=" scope.row.last_run_result ==false">{{ scope.row.last_run_result }}</span>
+                                    </template>
+                                </el-table-column>
                                 <el-table-column prop="last_run_date" label="最近执行时间" width="180"> </el-table-column>
                                 <el-table-column prop="last_run_time" label="最近执行耗时" width="120"> </el-table-column>
                             </el-table>
@@ -131,6 +138,7 @@ export default{
             this.current = current;
             testResultApi.findResult(this.current,this.size,this.resultQueryVo).then(response=>{
                 this.resultList = response.data.list;
+                console.log(this.resultList)
                 this.total = response.data.total;
             })
         },
