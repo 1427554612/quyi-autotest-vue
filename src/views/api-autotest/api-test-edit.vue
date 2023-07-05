@@ -4,7 +4,7 @@
             <div slot="header" class="clearfix">
                 <div slot="header" class="clearfix">
                     <span style="font-size:20px;font-weight: bolder;">编辑用例</span>
-                    <el-button style="margin-left:100px;" type="primary" @click="editTestCase">更新用例</el-button>
+                    <el-button style="margin-left:1400px;" type="primary" @click="editTestCase">更新用例</el-button>
                 </div>
             </div>
             <div class="hello">
@@ -23,14 +23,14 @@
         return {
           dataSourse:[],   // 表格数据源
           dataList:[], // 最终解析后的数据
-          rows:0, // 列的长度,
+          rows:0, // 行的长度,
+          cols:0, // 列的长度
           headers:['用例编号','用例名称','用例标题','接口地址','请求方式','主流程api','请求头','请求体','是否执行','断言内容','是否参数化','参数化数据'],
           headersKey:['caseNumber','caseName','caseTitle','apiPath','requestMethod','isMainProcessApi','requestHeaders','requestBody','isRun','assertMap','isParams','paramList']
           
         };
       },
       mounted() {
-          
       },
       created(){
         this.initDataSourse()
@@ -40,6 +40,7 @@
         async initDataSourse(){
           await apiTestApi.selectAllCase().then(response=>{
             this.dataSourse = response.data.list
+            this.rows = this.dataSourse.length
           })
           await this.objToExcel();
           await this.createExcel();
@@ -55,20 +56,26 @@
                 let datas = luckysheet.getAllSheets()[0].data;
                 let sendDatas = [];
                 datas.forEach((data,index)=>{
-                    let obj = {}
-                    if(index===0){
+                    console.log("data = " + JSON.stringify(data))
+                    if(data[0]===null || data[0]==='null'){
+
                     }
                     else{
-                        data.forEach((value,index)=>{
-                            if(value===null){
-                                obj[this.headersKey[index]] = value
-                            }
-                            else{
-                                obj[this.headersKey[index]] = value.v
-                            }
-                        })
+                        let obj = {}
+                        if(index===0){
+                        }
+                        else{
+                            data.forEach((value,index)=>{
+                                if(value===null){
+                                    obj[this.headersKey[index]] = value
+                                }
+                                else{
+                                    obj[this.headersKey[index]] = value.v
+                                }
+                            })
+                        }
+                        sendDatas.push(obj) 
                     }
-                    sendDatas.push(obj) 
                 })
                 sendDatas.splice(0,1)
                 apiTestApi.editAllCase(sendDatas).then(response=>{
@@ -85,7 +92,7 @@
   
         // case对象转表格格式
         objToExcel(){
-          this.rows = this.headers.length;
+          this.cols = this.headers.length;
           let headerIndex = 0;
           this.headers.forEach(header=>{
               this.dataList.push({r:0,c:headerIndex,v:header});
@@ -121,6 +128,7 @@
                 order: 0, //工作表的下标
                 hide: 1, //是否隐藏
                 row: this.rows, //行数
+                minRow:0,
                 column: 10, //列数
                 defaultRowHeight:100, //自定义行高,单位px
                 defaultColWidth: 180, //自定义列宽,单位px
@@ -210,6 +218,8 @@
             allowCopy: false, //是否允许拷贝
             enableAddRow: true, //允许添加行
           });
+          console.log(luckysheet.getAllSheets()[0])
+          console.log("列表行数：" + this.rows)
         }
       
       }

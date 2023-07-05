@@ -7,21 +7,21 @@
                 </div>
 
                 <!--统计图 -->
-                <div style="float:left;width: 45%;height: 850px;margin-top: 10px;">
-                    <el-card>
-                        <div id="charts1" style="width: 700px;height: 250px;float: left;"></div>
+                <div style="float:left;width: 45%;;margin-top: 10px;">
+                    <el-card id="charts1-card" style="height:900px">
+                        <div id="charts1" style="width: 700px;height: 816px;float: left;"></div>
                     </el-card>
-                    <el-card style="margin-top:10px">
+                    <!-- <el-card style="margin-top:10px">
                         <div id="charts2" style="width: 700px;height: 250px;float: left;"></div>
                     </el-card>
                     <el-card style="margin-top:10px">
                         <div id="charts3" style="width: 700px;height: 250px;float: left;"></div>
-                    </el-card>
+                    </el-card> -->
                 </div>
                 
 
-                <div style="float:right;width: 54%;height: 900px;;margin-top: 10px;">
-                    <el-card style="height:835px">
+                <div style="float:right;width: 54%;margin-top: 10px;">
+                    <el-card style="height:900px">
                         <div id="queryForm">
                          <!-- 搜索项表单 -->
                         <el-form :inline="true" class="demo-form-inline" >
@@ -55,6 +55,7 @@
                                     </template>
                                 </el-table-column>
                                 <el-table-column prop="case_name" label="用例名称" width="180"> </el-table-column>
+                                <el-table-column prop="case_title" label="用例名称" width="180"> </el-table-column>
                                 <el-table-column prop="case_type" label="用例类型" width="100"> </el-table-column>
                                 <el-table-column prop="run_num" label="执行总数" width="100"> </el-table-column>
                                 <el-table-column prop="run_success_num" label="成功总数" width="100"> </el-table-column>
@@ -84,6 +85,13 @@
                             </el-pagination>
                         </div>
                     </el-card>
+                </div>
+                <div style="width:1620px;float: left;margin-top: 20px;">
+                    <el-card style="height: 300px;">
+                        <div id="charts2" style="width: 700px;height: 250px;float: left;"></div>
+                        <div id="charts3" style="width: 700px;height: 250px;float: left;margin-left: 20px;"></div>
+                    </el-card>
+
                 </div>
             </div>
         </el-card>
@@ -182,7 +190,7 @@ export default{
                             fontWeight: 'bold'
                         }
                         },
-                        radius: ['50%', '70%'],
+                        radius: ['20%', '35%'],
                         data:this.charts1.series,
                         itemStyle: {
                             　　normal: {
@@ -345,9 +353,10 @@ export default{
 
 <style>
 #main-card{
-    height: 900px;
+    height: 1280px;
     width: 98%;
     margin-left: 13px;
     margin-top: 10px;
 }
+
 </style>

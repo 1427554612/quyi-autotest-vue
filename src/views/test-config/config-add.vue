@@ -147,7 +147,7 @@ export default {
         // 回显配置数据
         callbackShowConfig:function(configId){
             testConfigApi.selectConfigById(configId).then(response=>{
-                this.testConfig = response.data.data
+                this.testConfig = response.data.testConfig
                 console.log(this.testConfig)
             })
         }

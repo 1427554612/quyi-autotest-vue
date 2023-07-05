@@ -168,22 +168,10 @@ export const constantRoutes = [
     component: Layout,
     children: [
       {
-        path: 'demo',
-        name: '测试',
-        component: () => import('@/views/demo/demo'),
-        meta: { title: '测试', icon: 'form' }
-      },
-      {
-        path: 'demo2',
-        name: '测试',
-        component: () => import('@/views/demo/demo2'),
-        meta: { title: '测试', icon: 'form' }
-      },
-      {
-        path: 'demo3',
-        name: '测试',
-        component: () => import('@/views/demo/demo3'),
-        meta: { title: '测试', icon: 'form' }
+        path: '/codemirrorDemo',
+        name: '插件测试',
+        component: () => import('@/views/demo/codemirrorDemo'),
+        meta: { title: '插件测试', icon: 'form' }
       }
     ]
   },
