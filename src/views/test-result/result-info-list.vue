@@ -42,50 +42,9 @@ export default {
   },
   methods: {
     resize() {},
-    initEcharts:function(){
-        // 饼图
-        echarts.init(document.getElementById('main-2')).setOption({
-                legend: {
-                  orient: 'vertical',
-                  x: 'left',
-                  data: ['A', 'B', 'C', 'D', 'E']
-                },
-                title:{
-                  left: 'center',
-                  top: 'center'
-                },
-                series: [
-                  {
-                    type: 'pie',
-                    radius: ['50%', '70%'],
-                    avoidLabelOverlap: false,
-                    label: {
-                      show: false,
-                      position: 'center'
-                    },
-                    labelLine: {
-                      show: false
-                    },
-                    emphasis: {
-                      label: {
-                        show: true,
-                        fontSize: '30',
-                        fontWeight: 'bold'
-                      }
-                    },
-                    radius: ['50%', '70%'],
-                    data: [
-                      { value: 15, name: 'A' },
-                      { value: 20, name: 'B' },
-                      { value: 10, name: 'C' },
-                      { value: 30, name: 'D' },
-                      { value: 20, name: 'E' }
-                    ]
-                  }
-                ]
-            });
-    }
-  },
+    
+
+  }
 };
 </script>
 

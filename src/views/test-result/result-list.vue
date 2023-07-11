@@ -54,8 +54,8 @@
                                         </router-link>
                                     </template>
                                 </el-table-column>
-                                <el-table-column prop="case_name" label="用例名称" width="180"> </el-table-column>
-                                <el-table-column prop="case_title" label="用例名称" width="180"> </el-table-column>
+                                <el-table-column prop="case_name" label="用例名称" width="200"> </el-table-column>
+                                <el-table-column prop="case_title" label="用例名称" width="200"> </el-table-column>
                                 <el-table-column prop="case_type" label="用例类型" width="100"> </el-table-column>
                                 <el-table-column prop="run_num" label="执行总数" width="100"> </el-table-column>
                                 <el-table-column prop="run_success_num" label="成功总数" width="100"> </el-table-column>
@@ -63,7 +63,7 @@
                                 <el-table-column prop="run_success_rate" label="执行成功率" width="100">
                                     <template slot-scope="scope">{{ scope.row.run_success_rate }}%</template>
                                 </el-table-column>
-                                <el-table-column prop="last_run_result" label="最近执行结果" width="180"> 
+                                <el-table-column prop="last_run_result" label="最近执行结果" width="120"> 
                                     <template slot-scope="scope">
                                        <span style="color:green" v-if=" scope.row.last_run_result ==true">{{ scope.row.last_run_result }}</span>
                                        <span style="color:red" v-if=" scope.row.last_run_result ==false">{{ scope.row.last_run_result }}</span>
@@ -71,6 +71,11 @@
                                 </el-table-column>
                                 <el-table-column prop="last_run_date" label="最近执行时间" width="180"> </el-table-column>
                                 <el-table-column prop="last_run_time" label="最近执行耗时" width="120"> </el-table-column>
+                                <el-table-column prop="response_data" label="响应数据" width="180" style="" align=center>
+                                    <template slot-scope="scope">
+                                        <el-button type="primary" size="mini" icon="" @click="showResponseDataDialog(scope.row.response_data)">查看</el-button>
+                                    </template>
+                                </el-table-column>
                             </el-table>
                         </div>
                         <div id="page" style="margin-top:50px">
@@ -94,6 +99,18 @@
 
                 </div>
             </div>
+
+            <!-- 响应正文弹框 -->
+            <el-dialog title="接口响应" :visible.sync="dialogVisible" width="50%" :before-close="handleClose" >
+                <div style="width: 80%;height: 50%; margin-left: 100px;margin-top: 30px;">
+                    <vue-json-editor v-model="response_data" :showBtns="false" :mode="'code'"
+                        @json-change="onJsonChange" @json-save="onJsonSave" @has-error="onError" />
+                </div>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="dialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+                </span>
+            </el-dialog>
         </el-card>
     </div>
 </template>
@@ -101,8 +118,12 @@
 import testResultApi from '@/api/test-result/testResultApi';
 import * as echarts from 'echarts';
 import chartsApi from '@/api/test-result/chartsApi';
+import vueJsonEditor from 'vue-json-editor'
 
 export default{
+    components:{
+        vueJsonEditor:vueJsonEditor
+    },
     data(){
         return {
             resultQueryVo:{
@@ -126,7 +147,9 @@ export default{
             charts3:{
                 legends:[],
                 series:[]
-            }
+            },
+            response_data:{},   // 响应数据
+            dialogVisible:false
         }
     },
     created(){
@@ -343,6 +366,12 @@ export default{
                     ]
                 });
             })
+        },
+
+        // 打开响应弹框
+        showResponseDataDialog(response_data){
+            this.dialogVisible = true
+            this.response_data = response_data
         }
 
     }

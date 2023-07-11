@@ -2,28 +2,33 @@
     <!-- Two-way Data-Binding -->
     <!-- <codemirror v-model="code" :options="cmOptions" /> -->
     <!-- Or manually control the data synchronization -->
-    <div id="codeEditor" style="width:80%;height: 2000px;margin-top: 20px;margin-left: 10px;">
-        <codemirror
-            ref="cmEditor"
-            :value="code"
-            :options="cmOptions"
-            @ready="onCmReady"
-            @focus="onCmFocus"
-            @input="onCmCodeChange" style="height:2000px"/>
+    <div id="main">
+        <div id="codeEditor" style="width:80%;margin-top: 20px;margin-left: 10px;">
+            <codemirror 
+                ref="cmEditor"
+                :value="code"
+                :options="cmOptions"
+                @update="pythonScriptEdit"
+                @ready="onCmReady"
+                @focus="onCmFocus"
+                @input="onCmCodeChange" />
+        </div>
+        <div style="margin-top:10px">
+            <el-button @click="saveCode()">保存</el-button>
+        </div>
     </div>
-
-  </template>
+</template>
   
-  <script>
+<script>
   
-  import { codemirror } from 'vue-codemirror'
-  // import base style
-  import 'codemirror/lib/codemirror.css'
-  // import language js
-  import 'codemirror/mode/python/python.js'
-  // import theme style
-  import 'codemirror/theme/base16-dark.css'
-  // import more 'codemirror/some-resource...'
+import { codemirror } from 'vue-codemirror'
+// import base style
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/mode/python/python.js'
+import 'codemirror/theme/darcula.css'
+// 代码提示功能 具体语言可以从 codemirror/addon/hint/ 下引入多个
+import "codemirror/addon/hint/show-hint.css";
+import "codemirror/addon/hint/show-hint";
   export default {
       name: "codemirrorDemo",
       components: {
@@ -31,20 +36,28 @@
     },
     data () {
       return {
-        code: "def func(): ",
+        code: "def func():",
+        themes:['darcula','dracula','eclipse','erlang-dark','idea','liquibyte','mbo'],
         cmOptions: {
-            tabSize: 4,
-            mode: 'python',
-            theme: 'base16-dark',
-            lineNumbers: true,
+            tabSize: 4,            // table表格键空格数
+            mode: 'python',        // 编辑语言
+            theme: 'darcula',      // 主题样式
+            lineNumbers: true,     // 显示行号
             line: true,
-            keymap: "sublime", // 快键键风格
-            linenumbers: true, // 显示行号
-            smartindent: true, // 智能缩进
-            indentunit: 4, // 智能缩进单位为4个空格长度
-            indentwithtabs: true, // 使用制表符进行智能缩进
+            smartIndent: true,     // 智能缩进
+            indentUnit: 4,         // 智能缩进单位为4个空格长度
+            keymap: "sublime",     // 快键键风格
+            styleActiveLine: true, // 高亮选中行
+            readOnly:false,        // 只读模式
+            extraKeys: {"Ctrl": "autocomplete"},
+
         }
       }
+    },
+    mounted() {
+    //   this.$refs.cmEditor.codemirror.on("inputRead", (cmEditor) => {
+    //     cmEditor.showHint();
+    //     });
     },
     methods: {
       onCmReady(cm) {
@@ -56,16 +69,49 @@
       onCmCodeChange(newCode) {
         console.log('this is new code', newCode)
         this.code = newCode
+      },
+      onCmCodeChange(code){
+        this.code = code
+      },
+
+      pythonScriptEdit(code){
+        console.log(this.code)
+      },
+
+
+      // 保存脚本
+      saveCode(){
+        console.log(this.code)
+        let script ='"""' +'\n'+this.code+'\n'+ '"""'
+        console.log(script)
       }
+
     },
     computed: {
       codemirror() {
         return this.$refs.cmEditor.codemirror
       }
-    },
-    mounted() {
-      console.log('the current CodeMirror instance object:', this.codemirror)
-      // you can use this.codemirror to do something...
     }
+
   }
   </script>
+
+<style>
+/* .CodeMirror-scroll {
+    overflow: scroll !important;
+    margin-bottom: 0;
+    margin-right: 0;
+    padding-bottom: 0;
+    height: 90%;
+    outline: none;
+    position: relative;
+    border: 1px solid #dddddd;
+} */
+
+.vue-codemirror{
+    font-size : 15px;
+    /* line-height : 80%; */
+    text-align: left;
+}
+</style>
+
