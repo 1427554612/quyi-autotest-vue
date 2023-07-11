@@ -58,12 +58,10 @@
                 <span><b>用例列表</b></span>      
             </div> 
             <div style="margin-top:10px">
-                <span style="font-size:small;">用例总数:</span>
-                <span  style="font-size:small;font-weight:700; color:brown">{{ apiCaseList.length }}</span>
-
-                <span style="font-size:small;margin-left: 50px;">已勾选用例数:</span>
-                <span  style="font-size:small;font-weight:700; color:brown">{{ selectCaseList.length }}</span>
+                <el-tag type="warning" style="font-size:15px">用例总数: {{ apiCaseList.length }}</el-tag>
+                <el-tag type="danger" style="font-size:15px;margin-left: 20px;">已勾选用例数: {{ selectCaseList.length }}</el-tag>
             </div>
+            
             <el-table :header-cell-style="{'text-align':'center'}"  :data="apiCaseList" border max-height="600" style="width: 100%;margin-top: 10px;" @selection-change="caseTablehandleSelectionChange">
                 <el-table-column type="selection" width="" fixed ref="selectCases"> </el-table-column>
                 <el-table-column prop="caseNumber" label="用例编号" width="80" align=center></el-table-column>
@@ -105,7 +103,26 @@
                     </template>
                 </el-table-column>
             </el-table>
+
         </div>
+
+        <!--左侧抽屉 -->
+        <el-drawer :visible.sync="drawerIsView" direction="rtl" :before-close="handleClose" title="运行监控">
+            <el-card class="drawer-card" style="width:98%;margin-left: 5px;">
+                <div>
+                    <el-collapse v-model="activeNames" @change="handleChange" accordion>
+                        <el-collapse-item  name="1" >
+                            <template slot="title">
+                                <span style="font-size:larger;font-weight: 700;color:blue;">执行监控：</span><i class="header-icon el-icon-info" style="font-size: 18px;"></i>
+                            </template>
+                            <el-form ref="form11" :model="socketData" label-width="80px" id="table" >
+                                <el-input type="textarea" v-model="socketData" id="textarea"></el-input>
+                            </el-form>
+                        </el-collapse-item>
+                    </el-collapse>  
+                </div>
+            </el-card>
+        </el-drawer>
 
 
         <!-- 用例数据弹框 -->
@@ -136,7 +153,7 @@
             </span>
         </el-dialog>
         
-        <div style="margin-top:20px">
+        <!-- <div style="margin-top:20px">
             <el-collapse v-model="activeNames" @change="handleChange" accordion>
                 <el-collapse-item  name="1" >
                     <template slot="title">
@@ -146,10 +163,8 @@
                         <el-input type="textarea" v-model="socketData" id="textarea"></el-input>
                     </el-form>
                 </el-collapse-item>
-            </el-collapse>
-
-           
-        </div>
+            </el-collapse>  
+        </div> -->
     </el-card>
 
 </template>
@@ -182,7 +197,8 @@ export default {
             selectTestConfigId:"",          // 当前选中配置id
             selectCaseName:"",              // 当前选中的测试名称
             association:true,                // 关联按钮禁用、true：禁用、false：启用
-            socketData:""
+            socketData:"",
+            drawerIsView:false               // 抽屉是否打卡
 
         }
     },
@@ -278,8 +294,7 @@ export default {
         // 执行接口用例
        async runApiCase(){
             this.socketData = ""   // 清空通信数据
-            console.log("选中配置id：" + this.selectTestConfigId)
-            console.log("测试用例名称：" + this.selectCaseName)
+            this.drawerIsView = true
             // 批量执行
             if(this.selectCaseName === ""){
                 this.$message({
@@ -287,6 +302,11 @@ export default {
                     message:"开始执行用例......"
                 })
                 apiTestApi.selectRunCase(this.selectCaseList,this.selectTestConfigId).then(response=>{
+                    this.$notify({
+                        title: '成功',
+                        message: '执行完毕...',
+                        type: 'success'
+                    });
                     this.selectCaseList = []
                     this.downloadReport()
                 })
@@ -436,11 +456,7 @@ export default {
 }
 .jsoneditor-vue { height: 300px; }
 #textarea{
-    height: 350px;
-}
-#table{
-    height: 350px;
-
+    height: 800px;
 }
 #el-collapse-head-2999{
     font-size:larger;
