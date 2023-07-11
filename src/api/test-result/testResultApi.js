@@ -9,5 +9,13 @@ export default{
             method:"post",
             data:resultQueryVo
         })
+    },
+
+    // 查询所有
+    findAllResult(){
+        return request({
+            url:`/api/test_result/findResult`,
+            method:"get"
+        })
     }
 }

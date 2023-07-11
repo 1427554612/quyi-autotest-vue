@@ -1,47 +1,45 @@
 <template>
     <div class="app-container">
         <el-card class="box-card" style="width:98%;margin-left: 10px;">
-        <div slot="header" class="clearfix">
-            <span><b>配置数据</b></span>
-        </div>
-        <div style="width:90%">
-            <el-form label-width="120px" :model="testConfig" :rules="validator" ref="configForm">
-                <el-form-item label="配置id" v-if="testConfig.configId" >
-                    <el-input v-model="testConfig.configId" style="width:300px" />
-                </el-form-item>
-                <el-form-item label="配置名称" prop="configName" >
-                    <el-input v-model="testConfig.configName" style="width:300px"/>
-                </el-form-item>
-                <el-form-item label="创建人" prop="updateUp">
-                    <el-input v-model="testConfig.updateUp" style="width:300px"/>
-                </el-form-item>
-                <el-form-item label="配置数据" prop="configData">
-                    <vue-json-editor class="editor" id="jsonEdit" style="width:800px" v-model="testConfig.configData" :showBtns="false" :mode="'code'"
-                    @json-change="onJsonChange"  @has-error="onError" />
-                </el-form-item>
-                <el-form-item label="配置类型" prop="configType">
-                    <el-select v-model="testConfig.configType" clearable placeholder="请选择">
-                        <el-option value="api" label="api"/>
-                        <el-option value="web-ui" label="web-ui"/>
-                        <el-option value="phone-ui" label="phone-ui"/>
-                        <el-option value="performance" label="performance"/>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="配置说明" prop="configMark">
-                    <el-input type="textarea" v-model="testConfig.configMark" style="width:800px;" id="textarea"></el-input>
-                </el-form-item>
-                <el-form-item>
-                    <el-button :disabled="saveBtnDisabled" type="primary" @click="addOrUpdate">保存</el-button>
-                    <router-link :to="'/config-list'">
-                        <el-button :disabled="saveBtnDisabled" type="danger" style="margin-left:20px">取消</el-button>
-                    </router-link>
-                </el-form-item>
-            </el-form>
-        </div>
-    
-    </el-card>
-
-  </div>
+            <div slot="header" class="clearfix">
+                <span><b>配置数据</b></span>
+            </div>
+            <div style="width:95%">
+                <el-form label-width="120px" :model="testConfig" :rules="validator" ref="configForm">
+                    <el-form-item label="配置id" v-if="testConfig.configId" >
+                        <el-input v-model="testConfig.configId" style="width:300px" />
+                    </el-form-item>
+                    <el-form-item label="配置名称" prop="configName" >
+                        <el-input v-model="testConfig.configName" style="width:300px"/>
+                    </el-form-item>
+                    <el-form-item label="创建人" prop="updateUp">
+                        <el-input v-model="testConfig.updateUp" style="width:300px"/>
+                    </el-form-item>
+                    <el-form-item label="配置数据" prop="configData">
+                        <vue-json-editor class="editor" id="jsonEdit" style="width:800px" v-model="testConfig.configData" :showBtns="false" :mode="'code'"
+                        @json-change="onJsonChange"  @has-error="onError" />
+                    </el-form-item>
+                    <el-form-item label="配置类型" prop="configType">
+                        <el-select v-model="testConfig.configType" clearable placeholder="请选择">
+                            <el-option value="api" label="api"/>
+                            <el-option value="web-ui" label="web-ui"/>
+                            <el-option value="phone-ui" label="phone-ui"/>
+                            <el-option value="performance" label="performance"/>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="配置说明" prop="configMark">
+                        <el-input type="textarea" v-model="testConfig.configMark" style="width:800px;" id="textarea"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button :disabled="saveBtnDisabled" type="primary" @click="addOrUpdate">保存</el-button>
+                        <router-link :to="'/config-list'">
+                            <el-button :disabled="saveBtnDisabled" type="danger" style="margin-left:20px">取消</el-button>
+                        </router-link>
+                    </el-form-item>
+                </el-form>
+            </div>
+        </el-card>
+    </div>
 </template>
 <script>
 import vueJsonEditor from 'vue-json-editor'

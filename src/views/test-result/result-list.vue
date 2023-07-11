@@ -11,12 +11,6 @@
                     <el-card id="charts1-card" style="height:900px">
                         <div id="charts1" style="width: 700px;height: 816px;float: left;"></div>
                     </el-card>
-                    <!-- <el-card style="margin-top:10px">
-                        <div id="charts2" style="width: 700px;height: 250px;float: left;"></div>
-                    </el-card>
-                    <el-card style="margin-top:10px">
-                        <div id="charts3" style="width: 700px;height: 250px;float: left;"></div>
-                    </el-card> -->
                 </div>
                 
 
@@ -42,6 +36,10 @@
                             <el-form-item style="margin-left: 10px;">
                                 <el-button @click="findResult()">查询</el-button>
                                 <el-button @click="resetting()">重置</el-button>
+                                <el-tag  style="margin-left:250px;font-size:15px">当前执行总耗时（ms）: {{current_run_sum_time}}</el-tag>
+                                <el-tag type="warning" style="margin-left:20px;font-size:15px">当前执行总数: {{total}}</el-tag>
+                                <!-- <el-tag type="success" style="margin-left:20px"></el-tag>
+                                <el-tag type="danger" style="margin-left:20px"></el-tag> -->
                             </el-form-item>
                         </el-form>
                     </div>
@@ -55,7 +53,7 @@
                                     </template>
                                 </el-table-column>
                                 <el-table-column prop="case_name" label="用例名称" width="200"> </el-table-column>
-                                <el-table-column prop="case_title" label="用例名称" width="200"> </el-table-column>
+                                <el-table-column prop="case_title" label="用例标题" width="200"> </el-table-column>
                                 <el-table-column prop="case_type" label="用例类型" width="100"> </el-table-column>
                                 <el-table-column prop="run_num" label="执行总数" width="100"> </el-table-column>
                                 <el-table-column prop="run_success_num" label="成功总数" width="100"> </el-table-column>
@@ -149,7 +147,8 @@ export default{
                 series:[]
             },
             response_data:{},   // 响应数据
-            dialogVisible:false
+            dialogVisible:false,
+            current_run_sum_time:0
         }
     },
     created(){
@@ -157,6 +156,7 @@ export default{
         this.loadChartData1();
         this.loadChartData2();
         this.loadChartData3();
+        this.getCurrentRunTime();
     },
     methods:{
         // 充值搜索框
@@ -172,6 +172,22 @@ export default{
                 console.log(this.resultList)
                 this.total = response.data.total;
             })
+        },
+
+        // 获取总执行时间
+        getCurrentRunTime(){
+            console.log("1111111111111111111111111111111")
+            let runTimeSum = 0
+            testResultApi.findAllResult().then(response=>{
+                let resultList = response.data.list;
+                let size = resultList.length;
+                for(let i = 0;i<size;++i){
+                    console.log(resultList[i].last_run_time)
+                    runTimeSum = runTimeSum + resultList[i].last_run_time
+                }
+                this.current_run_sum_time = runTimeSum
+            })  
+
         },
 
         // 获取用例执行率
