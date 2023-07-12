@@ -44,7 +44,14 @@
             <el-table :header-cell-style="{'text-align':'center'}"  :data="configList" border style="width: 100%;margin-top: 10px;">
                 <el-table-column fixed="left" prop="configId" label="配置id" width="250" align=center></el-table-column>
                 <el-table-column prop="configName" label="配置名称" width="180" align=center></el-table-column>
-                <el-table-column prop="configType" label="配置类型" width="180" align=center></el-table-column>
+                <el-table-column prop="configType" label="配置类型" width="180" align=center>
+                    <template scope="scope">
+                        <el-tag style="font-size:15px" v-if="scope.row.configType==='api'">{{ scope.row.configType }}</el-tag>
+                        <el-tag style="font-size:15px" type="success" v-if="scope.row.configType==='web-ui'">{{ scope.row.configType }}</el-tag>
+                        <el-tag style="font-size:15px" type="info" v-if="scope.row.configType==='phone-ui'">{{ scope.row.configType }}</el-tag>
+                        <el-tag style="font-size:15px" type="warning" v-if="scope.row.configType==='performance'">{{ scope.row.configType }}</el-tag>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="configData" label="配置数据" width="180" style="" align=center>
                     <template slot-scope="scope">
                         <el-button type="primary" size="mini" icon="" @click="showConfigDataDialog(scope.row.configData)">查看</el-button>

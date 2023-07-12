@@ -71,14 +71,10 @@ export default class SocketService {
     
       // 收到消息
       this.ws.onmessage = (e) => {
-        // this.datas.push(e.data)
+        console.log("开始调用回调：")
+        console.log(typeof this.dealData)
+        console.log(this.dealData)
         this.dealData && this.dealData(e.data)
-        // let { payload, requestId } = JSON.parse(e.data);
-        // if (this.subscribeList[requestId]) {
-        //     this.subscribeList[requestId].forEach((item) =>
-        //       item.call(this, payload)
-        //     );
-        //   }
       };
     }
     //销毁回调函数
@@ -98,7 +94,6 @@ export default class SocketService {
     
     // 发送数据的方法
     send(data, callback,dealdata) {
-        console.log(dealdata)
         if(dealdata) this.dealData = dealdata
       
         //判断此时有没有ws

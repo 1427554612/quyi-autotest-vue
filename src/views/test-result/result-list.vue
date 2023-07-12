@@ -54,6 +54,7 @@
                                 </el-table-column>
                                 <el-table-column prop="case_name" label="用例名称" width="200"> </el-table-column>
                                 <el-table-column prop="case_title" label="用例标题" width="200"> </el-table-column>
+                                <el-table-column prop="last_run_platform" label="最近执行平台" width="200"></el-table-column>
                                 <el-table-column prop="case_type" label="用例类型" width="100"> </el-table-column>
                                 <el-table-column prop="run_num" label="执行总数" width="100"> </el-table-column>
                                 <el-table-column prop="run_success_num" label="成功总数" width="100"> </el-table-column>
@@ -63,12 +64,12 @@
                                 </el-table-column>
                                 <el-table-column prop="last_run_result" label="最近执行结果" width="120"> 
                                     <template slot-scope="scope">
-                                       <span style="color:green" v-if=" scope.row.last_run_result ==true">{{ scope.row.last_run_result }}</span>
-                                       <span style="color:red" v-if=" scope.row.last_run_result ==false">{{ scope.row.last_run_result }}</span>
+                                        <el-tag type="success" style="font-size:15px" v-if="scope.row.last_run_result === true">成功</el-tag>
+                                        <el-tag type="danger" style="font-size:15px" v-if="scope.row.last_run_result === false">失败</el-tag>
                                     </template>
                                 </el-table-column>
                                 <el-table-column prop="last_run_date" label="最近执行时间" width="180"> </el-table-column>
-                                <el-table-column prop="last_run_time" label="最近执行耗时" width="120"> </el-table-column>
+                                <el-table-column prop="last_run_time" label="最近执行耗时(ms)" width="140"> </el-table-column>
                                 <el-table-column prop="response_data" label="响应数据" width="180" style="" align=center>
                                     <template slot-scope="scope">
                                         <el-button type="primary" size="mini" icon="" @click="showResponseDataDialog(scope.row.response_data)">查看</el-button>

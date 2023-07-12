@@ -16,7 +16,7 @@
                         <el-input v-model="testConfig.updateUp" style="width:300px"/>
                     </el-form-item>
                     <el-form-item label="配置数据" prop="configData">
-                        <vue-json-editor class="editor" id="jsonEdit" style="width:800px" v-model="testConfig.configData" :showBtns="false" :mode="'code'"
+                        <vue-json-editor class="editor" id="jsonEdit" style="width:800px;height: 250px;" v-model="testConfig.configData" :showBtns="false" :mode="'code'"
                         @json-change="onJsonChange"  @has-error="onError" />
                     </el-form-item>
                     <el-form-item label="配置类型" prop="configType">

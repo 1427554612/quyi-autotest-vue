@@ -67,9 +67,21 @@
                 <el-table-column prop="caseNumber" label="用例编号" width="80" align=center></el-table-column>
                 <el-table-column prop="caseName" label="用例名称" width="260" align=center></el-table-column>
                 <el-table-column prop="caseTitle" label="用例标题" width="180" style="" align=center></el-table-column>
-                <el-table-column prop="apiPath" label="请求地址" width="180" style="" align=center></el-table-column>
-                <el-table-column prop="requestMethod" label="请求方式" width="180" style="" align=center></el-table-column>
-                <el-table-column prop="isMainProcessApi" label="主流程用例" width="180" style="" align=center></el-table-column>
+                <el-table-column prop="apiPath" label="请求地址" width="220" style="" align=center></el-table-column>
+                <el-table-column prop="requestMethod" label="请求方式" width="120" style="" align=center>
+                    <template scope="scope">
+                        <el-tag type="success" style="font-size:15px;" v-if="scope.row.requestMethod === 'get'">{{ scope.row.requestMethod }}</el-tag>
+                        <el-tag style="font-size:15px;" v-if="scope.row.requestMethod === 'post'">{{ scope.row.requestMethod }}</el-tag>
+                        <el-tag type="warning" style="font-size:15px;" v-if="scope.row.requestMethod === 'put'">{{ scope.row.requestMethod }}</el-tag>
+                        <el-tag type="danger" style="font-size:15px;" v-if="scope.row.requestMethod === 'delete'">{{ scope.row.requestMethod }}</el-tag>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="isMainProcessApi" label="主流程用例" width="120" style="" align=center>
+                    <template scope="scope">
+                        <el-tag type="success" style="font-size:15px" v-if="scope.row.isMainProcessApi === '是'">{{ scope.row.isMainProcessApi }}</el-tag>
+                        <el-tag type="warning" style="font-size:15px" v-if="scope.row.isMainProcessApi === '否'">{{ scope.row.isMainProcessApi }}</el-tag>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="requestHeaders" label="请求头列表" width="180" style="" align=center>
                     <template slot-scope="scope">
                         <el-button type="primary" size="mini" icon="el-icon-zoom-in" @click="showConfigDataDialog(scope.row.requestHeaders,'请求头信息')">查看</el-button>
@@ -80,13 +92,23 @@
                         <el-button type="primary" size="mini" icon="el-icon-zoom-in" v-if="scope.row.requestMethod === 'post' || scope.row.requestMethod === 'delete'" @click="showConfigDataDialog(scope.row.requestBody,'请求体信息')">查看</el-button>
                     </template>
                 </el-table-column>
-                <el-table-column prop="isRun" label="是否执行" width="180" align=center></el-table-column>
+                <el-table-column prop="isRun" label="是否执行" width="120" align=center>
+                    <template scope="scope">
+                        <el-tag type="success" style="font-size:15px" v-if="scope.row.isRun === '是'">{{ scope.row.isRun }}</el-tag>
+                        <el-tag type="warning" style="font-size:15px" v-if="scope.row.isRun === '否'">{{ scope.row.isRun }}</el-tag>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="assertMap" label="断言信息" width="180" align=center>
                     <template slot-scope="scope">
                         <el-button type="primary" size="mini" icon="el-icon-zoom-in" @click="showConfigDataDialog(scope.row.assertMap,'断言信息')">查看</el-button>
                     </template>
                 </el-table-column>
-                <el-table-column prop="isParams" label="是否参数化" width="180" align=center></el-table-column>
+                <el-table-column prop="isParams" label="是否参数化" width="120" align=center>
+                    <template scope="scope">
+                        <el-tag type="success" style="font-size:15px" v-if="scope.row.isParams === '是'">{{ scope.row.isParams }}</el-tag>
+                        <el-tag type="warning" style="font-size:15px" v-if="scope.row.isParams === '否'">{{ scope.row.isParams }}</el-tag>
+                    </template>
+                </el-table-column>
                 <!--  showConfigDataDialog(scope.row.params,'参数化信息' -->
                 <el-table-column prop="paramList" label="参数数据" width="180" align=center>
                     <template slot-scope="scope">
@@ -107,7 +129,7 @@
         </div>
 
         <!--左侧抽屉 -->
-        <el-drawer :visible.sync="drawerIsView" direction="rtl" :before-close="handleClose" title="运行监控">
+        <el-drawer :visible.sync="drawerIsView" direction="rtl" :before-close="handleClose" title="运行监控" modal="true" size="50%">
             <el-card class="drawer-card" style="width:98%;margin-left: 5px;">
                 <div>
                     <el-collapse v-model="activeNames" @change="handleChange" accordion>
@@ -153,18 +175,6 @@
             </span>
         </el-dialog>
         
-        <!-- <div style="margin-top:20px">
-            <el-collapse v-model="activeNames" @change="handleChange" accordion>
-                <el-collapse-item  name="1" >
-                    <template slot="title">
-                        <span style="font-size:larger;font-weight: 700;color:blue;">执行监控：</span><i class="header-icon el-icon-info" style="font-size: 18px;"></i>
-                    </template>
-                    <el-form ref="form11" :model="socketData" label-width="80px" id="table" >
-                        <el-input type="textarea" v-model="socketData" id="textarea"></el-input>
-                    </el-form>
-                </el-collapse-item>
-            </el-collapse>  
-        </div> -->
     </el-card>
 
 </template>
@@ -207,14 +217,14 @@ export default {
             window.alert(oldV + " -->" + newV)
         }
     },
-    mounted(){
-        this.ws = SocketService.Instance;
+    mounted(){  
+        this.ws = SocketService.Instance;  // 挂载组件时创建socket连接
         this.ws.send({id:"9527",message:new Date().toLocaleDateString() + ' 用户9527，成功连接服务器...'},this.Callback,this.dealData)
 
     },
     // 销毁
     destroyed() {
-        this.ws.unSubscribe();
+        this.ws.unSubscribe(); // 销毁ws 连接
     },
             
     created(){
@@ -286,10 +296,8 @@ export default {
         },
         // 回调函数
         dealData(e){
-            console.log(`****************************`)
-            console.log(typeof e,`--****--`)
+            console.log("推送数据为： " + e)
             this.socketData+=e+"\n"
-            console.log(`-------*****//////`)
         },
         // 执行接口用例
        async runApiCase(){
