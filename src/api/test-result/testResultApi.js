@@ -17,5 +17,13 @@ export default{
             url:`/api/test_result/findResult`,
             method:"get"
         })
+    },
+    
+    // 清空所有结果数据
+    deleteAllResult(){
+        return request({
+            url:`/api/test_result/deleteAllResult`,
+            method:"delete"
+        })
     }
 }

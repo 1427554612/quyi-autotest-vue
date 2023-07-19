@@ -4,6 +4,7 @@
             <div slot="header" class="clearfix">
                 <div slot="header" class="clearfix">
                     <span style="font-size:20px;font-weight: bolder;">结果管理</span>
+                    <el-button type="danger" size="mini" icon="el-icon-delete"  style="margin-left:1400px" @click="removeAllResult">清空结果数据</el-button>
                 </div>
 
                 <!--统计图 -->
@@ -55,7 +56,14 @@
                                 <el-table-column prop="case_name" label="用例名称" width="200"> </el-table-column>
                                 <el-table-column prop="case_title" label="用例标题" width="200"> </el-table-column>
                                 <el-table-column prop="last_run_platform" label="最近执行平台" width="200"></el-table-column>
-                                <el-table-column prop="case_type" label="用例类型" width="100"> </el-table-column>
+                                <el-table-column prop="case_type" label="用例类型" width="100">
+                                    <template scope="scope">
+                                        <el-tag style="font-size:15px" v-if="scope.row.case_type==='api'">{{ scope.row.case_type }}</el-tag>
+                                        <el-tag style="font-size:15px" type="success" v-if="scope.row.case_type==='web-ui'">{{ scope.row.case_type }}</el-tag>
+                                        <el-tag style="font-size:15px" type="info" v-if="scope.row.case_type==='phone-ui'">{{ scope.row.case_type }}</el-tag>
+                                        <el-tag style="font-size:15px" type="warning" v-if="scope.row.case_type==='performance'">{{ scope.row.case_type }}</el-tag>
+                                    </template>
+                                </el-table-column>
                                 <el-table-column prop="run_num" label="执行总数" width="100"> </el-table-column>
                                 <el-table-column prop="run_success_num" label="成功总数" width="100"> </el-table-column>
                                 <el-table-column prop="run_error_num" label="失败总数" width="100"> </el-table-column>
@@ -160,6 +168,24 @@ export default{
         this.getCurrentRunTime();
     },
     methods:{
+
+        // 清空所有结果数据
+        removeAllResult(){
+            this.$confirm('清空会导致之前的统计/结果数据全部删除, 是否确定?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(()=>{
+                testResultApi.deleteAllResult().then(response=>{
+                    this.findResult();
+                    this.loadChartData1();
+                    this.loadChartData2();
+                    this.loadChartData3();
+                    this.getCurrentRunTime();
+                })
+            })
+        },
+
         // 充值搜索框
         resetting(){
             this.resultQueryVo = {}

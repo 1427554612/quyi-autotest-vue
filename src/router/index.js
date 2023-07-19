@@ -46,12 +46,12 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
+    redirect: '/workstand',
     children: [{
-      path: 'dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: '数据统计', icon: 'dashboard' }
+      path: 'workstand',
+      name: '工作台',
+      component: () => import('@/views/workstand/index'),
+      meta: { title: '工作台', icon: 'dashboard' }
     }]
   },
   // 测试配置管理
