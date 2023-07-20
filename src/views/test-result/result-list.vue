@@ -109,9 +109,9 @@
 
             <!-- 响应正文弹框 -->
             <el-dialog title="接口响应" :visible.sync="dialogVisible" width="50%" :before-close="handleClose" >
-                <div style="width: 80%;height: 50%; margin-left: 100px;margin-top: 30px;">
+                <div style="width: 95%; margin-left: 20px;margin-top: 10px;">
                     <vue-json-editor v-model="response_data" :showBtns="false" :mode="'code'"
-                        @json-change="onJsonChange" @json-save="onJsonSave" @has-error="onError" />
+                        @json-change="onJsonChange" @json-save="onJsonSave" @has-error="onError"  style="padding"/>
                 </div>
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="dialogVisible = false">取 消</el-button>
@@ -429,6 +429,12 @@ export default{
     width: 98%;
     margin-left: 13px;
     margin-top: 10px;
+}
+
+.jsoneditor-vue { height: 400px; }
+
+.el-dialog{
+    height: 600px;
 }
 
 </style>
