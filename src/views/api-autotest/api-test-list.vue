@@ -117,7 +117,7 @@
                 </el-table-column>
                 <el-table-column fixed="right"  label="操作" align=center width="300">
                     <template slot-scope="scope">
-                        <el-button type="success" size="mini" icon="el-icon-caret-right" @click="openConfigDiglog(scope.row.caseName)">执行</el-button>
+                        <el-button type="success" size="mini" icon="el-icon-caret-right" @click="openConfigDiglog(scope.row)">执行</el-button>
                         <router-link :to="'/api/apiTestcaseInfo/'+scope.row.caseNumber">
                             <el-button type="info" size="mini" icon="el-icon-edit" style="margin-left: 15px">编辑</el-button>
                         </router-link>
@@ -205,7 +205,6 @@ export default {
             testConfigList:[],              // 测试配置列表
             selectCaseList:[],              // 选中用例列表
             selectTestConfigId:"",          // 当前选中配置id
-            selectCaseName:"",              // 当前选中的测试名称
             association:true,                // 关联按钮禁用、true：禁用、false：启用
             socketData:"",
             drawerIsView:false               // 抽屉是否打卡
@@ -248,19 +247,17 @@ export default {
         },
 
         // 关联测试配置弹框
-        openConfigDiglog:function(caseInfo){
-            console.log(typeof caseInfo)
+        openConfigDiglog:function(runCaseInfo){
             console.log("=========================")
-            if(typeof caseInfo === 'string'){
-                this.selectCaseName = caseInfo
-                this.selectCaseList = []
-            }else{
-                if(this.selectCaseList.length ===0){
+            if(runCaseInfo instanceof Array){
+                this.selectCaseList = runCaseInfo
+            }
+            else{
+                this.selectCaseList.push(runCaseInfo)
+                if(this.selectCaseList.length===0){
                     this.$message.error("至少需要勾选一条用例....")
-                    this.selectCaseList = []
                     return
                 }
-                this.selectCaseName = ""
             }
             this.selectAllConfig()
             this.configdialogVisible = true
@@ -277,7 +274,7 @@ export default {
             this.selectCaseList = []
             console.log(selectList)
             for(let i = 0; i< selectList.length;++i){
-                this.selectCaseList.push(selectList[i].caseName)
+                this.selectCaseList.push(selectList[i])
             }
         },
 
@@ -304,8 +301,7 @@ export default {
             this.socketData = ""   // 清空通信数据
             this.drawerIsView = true
             // 批量执行
-            if(this.selectCaseName === ""){
-                this.$message({
+            this.$message({
                     type:"success",
                     message:"开始执行用例......"
                 })
@@ -318,17 +314,6 @@ export default {
                     this.selectCaseList = []
                     this.downloadReport()
                 })
-            }
-            // 单条执行
-            else{
-                this.$message({
-                    type:"success",
-                    message:"开始执行用例......"
-                })
-                apiTestApi.runCase(this.selectCaseName,this.selectTestConfigId).then(response=>{
-                    this.selectCaseName = ""
-                })
-            }
             this.configdialogVisible = false
             this.selectTestConfigId = ""
             await this.selectAllApiTestCase()
