@@ -130,7 +130,8 @@ export default {
         },
 
         // 组合查询带分页
-        getConfigListAndPage:function(){
+        getConfigListAndPage:function(current = 1){
+            this.current = current
             testConfigApi.selectQueryVoAndPage(this.current,this.size,this.testConfigQuery).then(response=>{
                 this.total = response.data.total
                 this.configList = response.data.list
