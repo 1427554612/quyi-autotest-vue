@@ -8,7 +8,7 @@
                 ref="cmEditor"
                 :value="code"
                 :options="cmOptions"
-                @update="pythonScriptEdit"
+                @update="scriptEdit"
                 @ready="onCmReady"
                 @focus="onCmFocus"
                 @input="onCmCodeChange" />
@@ -24,11 +24,13 @@
 import { codemirror } from 'vue-codemirror'
 // import base style
 import 'codemirror/lib/codemirror.css'
-import 'codemirror/mode/python/python.js'
+// import 'codemirror/mode/python/python.js'
+require("codemirror/mode/clike/clike.js");
 import 'codemirror/theme/darcula.css'
 // 代码提示功能 具体语言可以从 codemirror/addon/hint/ 下引入多个
 import "codemirror/addon/hint/show-hint.css";
 import "codemirror/addon/hint/show-hint";
+import scriptApi from '@/api/test-script/scriptApi'
   export default {
       name: "codemirrorDemo",
       components: {
@@ -36,11 +38,11 @@ import "codemirror/addon/hint/show-hint";
     },
     data () {
       return {
-        code: "def func():",
+        code: "",
         themes:['darcula','dracula','eclipse','erlang-dark','idea','liquibyte','mbo'],
         cmOptions: {
             tabSize: 4,            // table表格键空格数
-            mode: 'python',        // 编辑语言
+            mode: 'text/x-java',        // 编辑语言
             theme: 'darcula',      // 主题样式
             lineNumbers: true,     // 显示行号
             line: true,
@@ -74,7 +76,7 @@ import "codemirror/addon/hint/show-hint";
         this.code = code
       },
 
-      pythonScriptEdit(code){
+      scriptEdit(code){
         console.log(this.code)
       },
 
@@ -82,8 +84,9 @@ import "codemirror/addon/hint/show-hint";
       // 保存脚本
       saveCode(){
         console.log(this.code)
-        let script ='"""' +'\n'+this.code+'\n'+ '"""'
-        console.log(script)
+        scriptApi.run({"script":this.code}).then(response=>{
+          console.log(JSON.stringify(response))
+        })
       }
 
     },
