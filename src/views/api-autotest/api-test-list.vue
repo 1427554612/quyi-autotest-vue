@@ -92,6 +92,18 @@
                         <el-button type="primary" size="mini" icon="el-icon-zoom-in" v-if="scope.row.requestMethod === 'post' || scope.row.requestMethod === 'delete'" @click="showConfigDataDialog(scope.row.requestBody,'请求体信息')">查看</el-button>
                     </template>
                 </el-table-column>
+                <el-table-column prop="beforeScript" label="前置脚本" width="180" style="" align=center>
+                    <template slot-scope="scope">
+                        <el-button type="primary" size="mini" icon="el-icon-zoom-in" @click="openScriptDialog('info',scope.row.caseNumber,scope.row.beforeScript)">查看</el-button>
+                        <el-button type="info" size="mini" icon="el-icon-edit" @click="openScriptDialog('before',scope.row.caseNumber,scope.row.beforeScript)">编辑</el-button>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="afterScript" label="后置脚本" width="180" style="" align=center>
+                    <template slot-scope="scope">
+                        <el-button type="primary" size="mini" icon="el-icon-zoom-in" @click="openScriptDialog('info',scope.row.caseNumber,scope.row.afterScript)">查看</el-button>
+                        <el-button type="info" size="mini" icon="el-icon-edit" @click="openScriptDialog('after',scope.row.caseNumber,scope.row.afterScript)">编辑</el-button>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="isRun" label="是否执行" width="120" align=center>
                     <template scope="scope">
                         <el-tag type="success" style="font-size:15px" v-if="scope.row.isRun === '是'">{{ scope.row.isRun }}</el-tag>
@@ -174,6 +186,26 @@
                 <el-button type="success" icon="el-icon-caret-right" @click="runApiCase" :disabled="association" >执行</el-button>
             </span>
         </el-dialog>
+
+         <!--java脚本抽屉 -->
+         <el-drawer :visible.sync="scriptVisible" direction="rtl" :before-close="handleClose" :title="dialogTitle" modal="true" size="60%">
+            <div >
+                <span slot="footer" class="dialog-footer" style="margin-left: 80%;">
+                    <el-button @click="configdialogVisible = false" v-if="scriptSaveButtonVisble">取 消</el-button>
+                    <el-button type="success" icon="el-icon-caret-right" @click="saveScript(code)" v-if="scriptSaveButtonVisble">保存</el-button>
+                </span>
+            </div>
+            <div id="codeEditor" style="width:98%;margin-top: 20px;margin-left: 10px;">
+                <codemirror 
+                    ref="cmEditor"
+                    :value="finalCode"
+                    :options="cmOptions"
+                    @update="codeUpdate"
+                    @ready="onCmReady"
+                    @focus="onCmFocus"
+                    @input="onCmCodeChange" />
+            </div>
+        </el-drawer>
         
     </el-card>
 
@@ -184,9 +216,20 @@ import apiTestApi from '@/api/api-autotest/apiTestApi'
 import testConfigApi  from '@/api/test-config/testConfigApi'
 import axios from 'axios'
 import SocketService from '@/utils/websocket'
+import { codemirror } from 'vue-codemirror'
+// import base style
+import 'codemirror/lib/codemirror.css'
+// import 'codemirror/mode/python/python.js'
+require("codemirror/mode/clike/clike.js");
+import 'codemirror/theme/darcula.css'
+// 代码提示功能 具体语言可以从 codemirror/addon/hint/ 下引入多个
+import "codemirror/addon/hint/show-hint.css";
+import "codemirror/addon/hint/show-hint";
 export default {
+    name: "codemirrorDemo",
     components:{
-        vueJsonEditor:vueJsonEditor
+        vueJsonEditor:vueJsonEditor,
+        codemirror:codemirror
     },
     data(){
         return {
@@ -200,14 +243,38 @@ export default {
             caseData:{},
             dialogVisible:false,            // 用例信息弹框
             configdialogVisible:false,      // 配置信息弹框
+            scriptVisible:false,            // 脚本编辑弹框
+            scriptSaveButtonVisble:false,   // 保存脚本按钮
             dialogName:"",
-            apiCaseList:[],
+            apiCaseList:[],                 // 测试用例列表
             testConfigList:[],              // 测试配置列表
             selectCaseList:[],              // 选中用例列表
             selectTestConfigId:"",          // 当前选中配置id
             association:true,                // 关联按钮禁用、true：禁用、false：启用
             socketData:"",
-            drawerIsView:false               // 抽屉是否打卡
+            drawerIsView:false,               // 抽屉是否打卡
+            
+            // 脚本处理 
+            beforeScript: "",                         // 前置脚本
+            afterScript:"",                           // 后置脚本
+            finalCode:"",                             // 最终脚本
+            selectCode:"",                          // 选中前还是后
+            caseNumber:0,                           // 当前编号
+            dialogTitle:"",                   
+            themes:['darcula','dracula','eclipse','erlang-dark','idea','liquibyte','mbo'],
+            cmOptions: {
+                tabSize: 4,            // table表格键空格数
+                mode: 'text/x-java',        // 编辑语言
+                theme: 'darcula',      // 主题样式
+                lineNumbers: true,     // 显示行号
+                line: true,
+                smartIndent: true,     // 智能缩进
+                indentUnit: 4,         // 智能缩进单位为4个空格长度
+                keymap: "sublime",     // 快键键风格
+                styleActiveLine: true, // 高亮选中行
+                readOnly:false,        // 只读模式
+                extraKeys: {"Ctrl": "autocomplete"}
+            }
 
         }
     },
@@ -225,6 +292,7 @@ export default {
     destroyed() {
         this.ws.unSubscribe(); // 销毁ws 连接
     },
+    
             
     created(){
         this.selectAllApiTestCase()
@@ -237,6 +305,92 @@ export default {
                 this.apiCaseList = response.data.list
             })
         },
+
+        onCmReady(cm) {
+            console.log('the editor is readied!', cm)
+        },
+        onCmFocus(cm) {
+            console.log('the editor is focused!', cm)
+        },
+        onCmCodeChange(newCode) {
+            console.log('this is new code', newCode)
+            this.code = newCode
+        },
+
+        codeUpdate(){
+
+        },
+
+        // 脚本编辑
+        openScriptDialog:function(str,caseNumber,code){
+            // 回显数据
+            this.finalCode = code;
+            // 前置脚本
+            if(str === 'before'){
+                this.dialogTitle = "前置脚本处理"
+                this.caseNumber = caseNumber;
+                this.selectCode = str;
+                this.scriptSaveButtonVisble = true;
+                this.scriptVisible = true;
+            }
+            // 后置脚本
+            else if(str == 'after'){
+                this.dialogTitle = "后置脚本处理"
+                this.caseNumber = caseNumber;
+                this.selectCode = str;
+                this.scriptSaveButtonVisble = true;
+                this.scriptVisible = true;
+            }else{
+                this.dialogTitle = "查看"
+                this.caseNumber = caseNumber;
+                this.selectCode = str;
+                this.scriptVisible = true;
+                this.scriptSaveButtonVisble = false
+            }
+        },
+        
+        // 保存脚本
+       async saveScript(code){
+            if(this.selectCode == 'before'){
+                this.beforeScript = code;
+                this.finalCode = this.beforeScript;
+            }else{
+                this.afterScript = code;
+                this.finalCode = this.afterScript;
+            }
+            console.log("final code = " + this.finalCode)
+            let index = 0;   // 下标
+            this.apiCaseList.forEach((element,i) => {
+                if(element.caseNumber === this.caseNumber){
+                    index= i;
+                    console.log("选中的列表元素位置是：" + index)
+                    element.beforeScript = this.beforeScript;
+                    element.afterScript = this.afterScript;
+                    console.log("--------------------")
+                    console.log(this.apiCaseList[index])
+                }
+            });
+            await apiTestApi.editAllCase(this.apiCaseList).then(response=>{
+                // 批量执行
+                this.$message({
+                    type:"success",
+                    message:"脚本编辑成功！"
+                })
+                // this.$router.go(0);
+                location.reload()
+            
+            })
+
+        },
+
+        // 脚本变更
+        onCmCodeChange(code){
+            console.log(code)
+            this.code = code
+        },
+
+
+
 
         // 显示Json详细数据模态框
         showConfigDataDialog:function(caseData,dialogName){
@@ -454,5 +608,9 @@ export default {
 #el-collapse-head-2999{
     font-size:larger;
     font-weight:700
+}
+
+.CodeMirror{
+    height: 800px;
 }
 </style>
