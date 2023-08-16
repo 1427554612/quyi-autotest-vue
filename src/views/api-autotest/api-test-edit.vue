@@ -25,8 +25,8 @@
           dataList:[], // 最终解析后的数据
           rows:0, // 行的长度,
           cols:0, // 列的长度
-          headers:['用例编号','用例名称','用例标题','接口地址','请求方式','主流程api','请求头','请求体','是否执行','断言内容','是否参数化','参数化数据'],
-          headersKey:['caseNumber','caseName','caseTitle','apiPath','requestMethod','isMainProcessApi','requestHeaders','requestBody','isRun','assertMap','isParams','paramList']
+          headers:['用例编号','用例名称','用例标题','接口地址','请求方式','主流程api','请求头','请求体','前置脚本','后置脚本','是否执行','断言内容','是否参数化','参数化数据'],
+          headersKey:['caseNumber','caseName','caseTitle','apiPath','requestMethod','isMainProcessApi','requestHeaders','requestBody','beforeScript','afterScript','isRun','assertMap','isParams','paramList']
           
         };
       },

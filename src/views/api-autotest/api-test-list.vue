@@ -94,13 +94,13 @@
                 </el-table-column>
                 <el-table-column prop="beforeScript" label="前置脚本" width="180" style="" align=center>
                     <template slot-scope="scope">
-                        <el-button type="primary" size="mini" icon="el-icon-zoom-in" @click="openScriptDialog('info',scope.row.caseNumber,scope.row.beforeScript)">查看</el-button>
+                        <el-button type="primary" size="mini" icon="el-icon-zoom-in" @click="openScriptDialog('beforeInfo',scope.row.caseNumber,scope.row.beforeScript)">查看</el-button>
                         <el-button type="info" size="mini" icon="el-icon-edit" @click="openScriptDialog('before',scope.row.caseNumber,scope.row.beforeScript)">编辑</el-button>
                     </template>
                 </el-table-column>
                 <el-table-column prop="afterScript" label="后置脚本" width="180" style="" align=center>
                     <template slot-scope="scope">
-                        <el-button type="primary" size="mini" icon="el-icon-zoom-in" @click="openScriptDialog('info',scope.row.caseNumber,scope.row.afterScript)">查看</el-button>
+                        <el-button type="primary" size="mini" icon="el-icon-zoom-in" @click="openScriptDialog('afterInfo',scope.row.caseNumber,scope.row.afterScript)">查看</el-button>
                         <el-button type="info" size="mini" icon="el-icon-edit" @click="openScriptDialog('after',scope.row.caseNumber,scope.row.afterScript)">编辑</el-button>
                     </template>
                 </el-table-column>
@@ -140,7 +140,25 @@
 
         </div>
 
-        <!--左侧抽屉 -->
+        <!--推送监控 -->
+        <el-drawer :visible.sync="drawerIsView" direction="rtl" :before-close="handleClose" title="运行监控" modal="true" size="50%">
+            <el-card class="drawer-card" style="width:98%;margin-left: 5px;">
+                <div>
+                    <el-collapse v-model="activeNames" @change="handleChange" accordion>
+                        <el-collapse-item  name="1" >
+                            <template slot="title">
+                                <span style="font-size:larger;font-weight: 700;color:blue;">执行监控：</span><i class="header-icon el-icon-info" style="font-size: 18px;"></i>
+                            </template>
+                            <el-form ref="form11" :model="socketData" label-width="80px" id="table" >
+                                <el-input type="textarea" v-model="socketData" id="textarea"></el-input>
+                            </el-form>
+                        </el-collapse-item>
+                    </el-collapse>  
+                </div>
+            </el-card>
+        </el-drawer>
+
+        <!--推送监控 -->
         <el-drawer :visible.sync="drawerIsView" direction="rtl" :before-close="handleClose" title="运行监控" modal="true" size="50%">
             <el-card class="drawer-card" style="width:98%;margin-left: 5px;">
                 <div>
@@ -187,8 +205,8 @@
             </span>
         </el-dialog>
 
-         <!--java脚本抽屉 -->
-         <el-drawer :visible.sync="scriptVisible" direction="rtl" :before-close="handleClose" :title="dialogTitle" modal="true" size="60%">
+         <!--java前置脚本抽屉 -->
+         <el-drawer :visible.sync="beforeScriptVisible" direction="rtl" :before-close="handleClose" :title="dialogTitle" modal="true" size="60%">
             <div >
                 <span slot="footer" class="dialog-footer" style="margin-left: 80%;">
                     <el-button @click="configdialogVisible = false" v-if="scriptSaveButtonVisble">取 消</el-button>
@@ -198,7 +216,27 @@
             <div id="codeEditor" style="width:98%;margin-top: 20px;margin-left: 10px;">
                 <codemirror 
                     ref="cmEditor"
-                    :value="finalCode"
+                    :value="beforeScript"
+                    :options="cmOptions"
+                    @update="codeUpdate"
+                    @ready="onCmReady"
+                    @focus="onCmFocus"
+                    @input="onCmCodeChange" />
+            </div>
+        </el-drawer>
+
+        <!--java后置脚本抽屉 -->
+        <el-drawer :visible.sync="afterScriptVisible" direction="rtl" :before-close="handleClose" :title="dialogTitle" modal="true" size="60%">
+            <div >
+                <span slot="footer" class="dialog-footer" style="margin-left: 80%;">
+                    <el-button @click="configdialogVisible = false" v-if="scriptSaveButtonVisble">取 消</el-button>
+                    <el-button type="success" icon="el-icon-caret-right" @click="saveScript(code)" v-if="scriptSaveButtonVisble">保存</el-button>
+                </span>
+            </div>
+            <div id="codeEditor" style="width:98%;margin-top: 20px;margin-left: 10px;">
+                <codemirror 
+                    ref="cmEditor"
+                    :value="afterScript"
                     :options="cmOptions"
                     @update="codeUpdate"
                     @ready="onCmReady"
@@ -243,7 +281,8 @@ export default {
             caseData:{},
             dialogVisible:false,            // 用例信息弹框
             configdialogVisible:false,      // 配置信息弹框
-            scriptVisible:false,            // 脚本编辑弹框
+            beforeScriptVisible:false,       // 前置脚本编辑弹框
+            afterScriptVisible:false,       // 后置脚本编辑弹框
             scriptSaveButtonVisble:false,   // 保存脚本按钮
             dialogName:"",
             apiCaseList:[],                 // 测试用例列表
@@ -257,7 +296,6 @@ export default {
             // 脚本处理 
             beforeScript: "",                         // 前置脚本
             afterScript:"",                           // 后置脚本
-            finalCode:"",                             // 最终脚本
             selectCode:"",                          // 选中前还是后
             caseNumber:0,                           // 当前编号
             dialogTitle:"",                   
@@ -323,28 +361,37 @@ export default {
 
         // 脚本编辑
         openScriptDialog:function(str,caseNumber,code){
-            // 回显数据
-            this.finalCode = code;
+
             // 前置脚本
             if(str === 'before'){
                 this.dialogTitle = "前置脚本处理"
+                this.beforeScript = code;
                 this.caseNumber = caseNumber;
                 this.selectCode = str;
                 this.scriptSaveButtonVisble = true;
-                this.scriptVisible = true;
+                this.beforeScriptVisible = true;
             }
             // 后置脚本
             else if(str == 'after'){
                 this.dialogTitle = "后置脚本处理"
                 this.caseNumber = caseNumber;
+                this.afterScript = code
                 this.selectCode = str;
                 this.scriptSaveButtonVisble = true;
-                this.scriptVisible = true;
-            }else{
-                this.dialogTitle = "查看"
+                this.afterScriptVisible = true;
+            }else if(str == 'beforeInfo'){
+                this.dialogTitle = "前置脚本查看"
+                this.beforeScript = code;
                 this.caseNumber = caseNumber;
                 this.selectCode = str;
-                this.scriptVisible = true;
+                this.beforeScriptVisible = true;
+                this.scriptSaveButtonVisble = false;
+            }else {
+                this.dialogTitle = "查看"
+                this.caseNumber = caseNumber;
+                this.afterScript = code
+                this.selectCode = str;
+                this.afterScriptVisible = true;
                 this.scriptSaveButtonVisble = false
             }
         },
@@ -353,10 +400,8 @@ export default {
        async saveScript(code){
             if(this.selectCode == 'before'){
                 this.beforeScript = code;
-                this.finalCode = this.beforeScript;
             }else{
                 this.afterScript = code;
-                this.finalCode = this.afterScript;
             }
             console.log("final code = " + this.finalCode)
             let index = 0;   // 下标
@@ -366,8 +411,6 @@ export default {
                     console.log("选中的列表元素位置是：" + index)
                     element.beforeScript = this.beforeScript;
                     element.afterScript = this.afterScript;
-                    console.log("--------------------")
-                    console.log(this.apiCaseList[index])
                 }
             });
             await apiTestApi.editAllCase(this.apiCaseList).then(response=>{
