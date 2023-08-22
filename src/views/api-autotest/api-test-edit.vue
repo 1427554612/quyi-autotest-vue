@@ -56,7 +56,6 @@
                 let datas = luckysheet.getAllSheets()[0].data;
                 let sendDatas = [];
                 datas.forEach((data,index)=>{
-                    console.log("data = " + JSON.stringify(data))
                     if(data[0]===null || data[0]==='null'){
 
                     }
@@ -65,12 +64,21 @@
                         if(index===0){
                         }
                         else{
+                          console.log(this.headersKey)
                             data.forEach((value,index)=>{
-                                if(value===null){
+                                if(value===null || value===""){
                                     obj[this.headersKey[index]] = value
                                 }
                                 else{
-                                    obj[this.headersKey[index]] = value.v
+                                    // 解决编辑obj类型数据、数据值结构变化问题
+                                    if(value.v===undefined || value.v===null){
+                                      console.log(this.headersKey)
+                                      console.log(value.ct.s[0])
+                                      obj[this.headersKey[index]] = value.ct.s[0].v
+                                    }
+                                   else{
+                                      obj[this.headersKey[index]] = value.v
+                                   }
                                 }
                             })
                         }
@@ -217,6 +225,7 @@
             sheetFormulaBar: false, //是否显示公式栏
             allowCopy: false, //是否允许拷贝
             enableAddRow: true, //允许添加行
+            enableRemoveRow:true
           });
           console.log(luckysheet.getAllSheets()[0])
           console.log("列表行数：" + this.rows)

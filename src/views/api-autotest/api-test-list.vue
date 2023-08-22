@@ -70,10 +70,10 @@
                 <el-table-column prop="apiPath" label="请求地址" width="220" style="" align=center></el-table-column>
                 <el-table-column prop="requestMethod" label="请求方式" width="120" style="" align=center>
                     <template scope="scope">
-                        <el-tag type="success" style="font-size:15px;" v-if="scope.row.requestMethod === 'get'">{{ scope.row.requestMethod }}</el-tag>
-                        <el-tag style="font-size:15px;" v-if="scope.row.requestMethod === 'post'">{{ scope.row.requestMethod }}</el-tag>
-                        <el-tag type="warning" style="font-size:15px;" v-if="scope.row.requestMethod === 'put'">{{ scope.row.requestMethod }}</el-tag>
-                        <el-tag type="danger" style="font-size:15px;" v-if="scope.row.requestMethod === 'delete'">{{ scope.row.requestMethod }}</el-tag>
+                        <el-tag type="success" style="font-size:15px;" v-if="scope.row.requestMethod === 'GET'">{{ scope.row.requestMethod }}</el-tag>
+                        <el-tag style="font-size:15px;" v-if="scope.row.requestMethod === 'POST'">{{ scope.row.requestMethod }}</el-tag>
+                        <el-tag type="warning" style="font-size:15px;" v-if="scope.row.requestMethod === 'PUT'">{{ scope.row.requestMethod }}</el-tag>
+                        <el-tag type="danger" style="font-size:15px;" v-if="scope.row.requestMethod === 'DELETE'">{{ scope.row.requestMethod }}</el-tag>
                     </template>
                 </el-table-column>
                 <el-table-column prop="isMainProcessApi" label="主流程用例" width="120" style="" align=center>
@@ -89,7 +89,7 @@
                 </el-table-column>
                 <el-table-column prop="requestBody" label="请求体" width="180" style="" align=center>
                     <template slot-scope="scope">
-                        <el-button type="primary" size="mini" icon="el-icon-zoom-in" v-if="scope.row.requestMethod === 'post' || scope.row.requestMethod === 'delete'" @click="showConfigDataDialog(scope.row.requestBody,'请求体信息')">查看</el-button>
+                        <el-button type="primary" size="mini" icon="el-icon-zoom-in" v-if="scope.row.requestMethod === 'POST' || scope.row.requestMethod === 'PUT'" @click="showConfigDataDialog(scope.row.requestBody,'请求体信息')">查看</el-button>
                     </template>
                 </el-table-column>
                 <el-table-column prop="beforeScript" label="前置脚本" width="180" style="" align=center>
@@ -106,8 +106,8 @@
                 </el-table-column>
                 <el-table-column prop="isRun" label="是否执行" width="120" align=center>
                     <template scope="scope">
-                        <el-tag type="success" style="font-size:15px" v-if="scope.row.isRun === '是'">{{ scope.row.isRun }}</el-tag>
-                        <el-tag type="warning" style="font-size:15px" v-if="scope.row.isRun === '否'">{{ scope.row.isRun }}</el-tag>
+                        <el-tag type="success" style="font-size:15px" v-if="scope.row.isRun === '是' || scope.row.isRun==='Y'">{{ scope.row.isRun }}</el-tag>
+                        <el-tag type="warning" style="font-size:15px" v-if="scope.row.isRun === '否' || scope.row.isRun==='N'">{{ scope.row.isRun }}</el-tag>
                     </template>
                 </el-table-column>
                 <el-table-column prop="assertMap" label="断言信息" width="180" align=center>
@@ -141,7 +141,7 @@
         </div>
 
         <!--推送监控 -->
-        <el-drawer :visible.sync="drawerIsView" direction="rtl" :before-close="handleClose" title="运行监控" modal="true" size="50%">
+        <!-- <el-drawer :visible.sync="drawerIsView" direction="rtl" :before-close="handleClose" title="运行监控" modal="true" size="50%">
             <el-card class="drawer-card" style="width:98%;margin-left: 5px;">
                 <div>
                     <el-collapse v-model="activeNames" @change="handleChange" accordion>
@@ -156,24 +156,30 @@
                     </el-collapse>  
                 </div>
             </el-card>
-        </el-drawer>
+        </el-drawer> -->
 
-        <!--推送监控 -->
+        <!-- 推送监控,折叠面板方式 -->
         <el-drawer :visible.sync="drawerIsView" direction="rtl" :before-close="handleClose" title="运行监控" modal="true" size="50%">
-            <el-card class="drawer-card" style="width:98%;margin-left: 5px;">
-                <div>
-                    <el-collapse v-model="activeNames" @change="handleChange" accordion>
-                        <el-collapse-item  name="1" >
-                            <template slot="title">
-                                <span style="font-size:larger;font-weight: 700;color:blue;">执行监控：</span><i class="header-icon el-icon-info" style="font-size: 18px;"></i>
-                            </template>
-                            <el-form ref="form11" :model="socketData" label-width="80px" id="table" >
-                                <el-input type="textarea" v-model="socketData" id="textarea"></el-input>
-                            </el-form>
-                        </el-collapse-item>
-                    </el-collapse>  
-                </div>
-            </el-card>
+            <div style=" overflow:scroll; height: 850px;">
+                <el-collapse v-model="activeNames" @change="handleChange" style="width:95%;margin-left:20px">
+                    <el-collapse-item :title="item.caseName"  style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;" v-for="(item) in pullDatas" :key="item" >
+                        <div>
+                            <span style="font-weight:bold;color: #3555BC;"><a href="Javascript:void(0)">{{ item.caseName }}</a></span>
+                            <el-tag type="success" style="margin-left:22%" size="mini">200</el-tag>
+                            <el-tag type="success" style="margin-left:22%" size="mini">1042ms</el-tag>
+                            <el-tag type="success" style="margin-left:22%" size="mini">success</el-tag>
+                        </div>
+                        <el-collapse v-model="activeNames" @change="handleChange" style="width:95%;margin-left:20px">
+                            <el-collapse-item title="requestBody"  style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;">
+                                <div style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;height: 30px;margin-top: 10px;width:98%">与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
+                            </el-collapse-item>
+                            <el-collapse-item title="response"  style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;">
+                                <div style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;height: 30px;margin-top: 10px;width:98%">与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
+                            </el-collapse-item>
+                        </el-collapse>
+                    </el-collapse-item>
+                </el-collapse>
+            </div>
         </el-drawer>
 
 
@@ -271,6 +277,7 @@ export default {
     },
     data(){
         return {
+            pullDatas:[],                   // 通信数据列表、用来动态创建元素
             BASE_URL:process.env.VUE_APP_BASE_API,
             apiTestCaseQuery:{              // 测试用例查询对象
             
@@ -290,7 +297,7 @@ export default {
             selectCaseList:[],              // 选中用例列表
             selectTestConfigId:"",          // 当前选中配置id
             association:true,                // 关联按钮禁用、true：禁用、false：启用
-            socketData:"",
+            socketData:"",                    // 通信数据
             drawerIsView:false,               // 抽屉是否打卡
             
             // 脚本处理 
@@ -488,14 +495,18 @@ export default {
                 this.association = true
             }
         },
-        // 回调函数
+
+        // 回调函数，当通信数据返回后
         dealData(e){
             console.log("推送数据为： " + e)
-            this.socketData+=e+"\n"
+            // this.socketData+=e+"\n"
+            this.pullDatas.push(JSON.parse(e))
         },
+
         // 执行接口用例
        async runApiCase(){
-            this.socketData = ""   // 清空通信数据
+            // this.socketData = ""   // 清空通信数据
+            this.pullDatas = [];      // 清空通信数据
             this.drawerIsView = true
             // 批量执行
             this.$message({
