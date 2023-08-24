@@ -140,23 +140,6 @@
 
         </div>
 
-        <!--推送监控 -->
-        <!-- <el-drawer :visible.sync="drawerIsView" direction="rtl" :before-close="handleClose" title="运行监控" modal="true" size="50%">
-            <el-card class="drawer-card" style="width:98%;margin-left: 5px;">
-                <div>
-                    <el-collapse v-model="activeNames" @change="handleChange" accordion>
-                        <el-collapse-item  name="1" >
-                            <template slot="title">
-                                <span style="font-size:larger;font-weight: 700;color:blue;">执行监控：</span><i class="header-icon el-icon-info" style="font-size: 18px;"></i>
-                            </template>
-                            <el-form ref="form11" :model="socketData" label-width="80px" id="table" >
-                                <el-input type="textarea" v-model="socketData" id="textarea"></el-input>
-                            </el-form>
-                        </el-collapse-item>
-                    </el-collapse>  
-                </div>
-            </el-card>
-        </el-drawer> -->
 
         <!-- 推送监控,折叠面板方式 -->
         <el-drawer :visible.sync="drawerIsView" direction="rtl" :before-close="handleClose" title="运行监控" modal="true" size="50%">
@@ -166,15 +149,19 @@
                         <div>
                             <span style="font-weight:bold;color: #3555BC;"><a href="Javascript:void(0)">{{ item.caseName }}</a></span>
                             <el-tag type="success" style="margin-left:22%" size="mini">200</el-tag>
-                            <el-tag type="success" style="margin-left:22%" size="mini">1042ms</el-tag>
-                            <el-tag type="success" style="margin-left:22%" size="mini">success</el-tag>
+                            <el-tag type="success" style="margin-left:22%" size="mini">{{item.runResult == 1 ? "成功" : "失败"}}</el-tag>
+                            <el-tag type="success" style="margin-left:22%" size="mini">{{item.runTime}}ms</el-tag>
                         </div>
                         <el-collapse v-model="activeNames" @change="handleChange" style="width:95%;margin-left:20px">
-                            <el-collapse-item title="requestBody"  style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;">
-                                <div style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;height: 30px;margin-top: 10px;width:98%">与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
+                            <el-collapse-item title="request"  style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;">
+                                <!-- <div style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;width:98%;height: 500px;">{{ item.datas &&  item.datas.requestBody}}</div> -->
+                                <vue-json-editor :value="item.datas&&JSON.parse(item.datas.requestBody)" :showBtns="false" :mode="'code'"
+                                    @json-change="onJsonChange" @json-save="onJsonSave" @has-error="onError" />
                             </el-collapse-item>
                             <el-collapse-item title="response"  style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;">
-                                <div style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;height: 30px;margin-top: 10px;width:98%">与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
+                                <!-- <div style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;width:98%;height: 500px;" >{{ item.resultData }}</div> -->
+                                <vue-json-editor :value="item.resultData" :showBtns="false" :mode="'code'"
+                                    @json-change="onJsonChange" @json-save="onJsonSave" @has-error="onError" />
                             </el-collapse-item>
                         </el-collapse>
                     </el-collapse-item>
@@ -439,6 +426,10 @@ export default {
             this.code = code
         },
 
+        showRequestData(item){
+            console.log("回推数据")
+        },
+
 
 
 
@@ -501,6 +492,7 @@ export default {
             console.log("推送数据为： " + e)
             // this.socketData+=e+"\n"
             this.pullDatas.push(JSON.parse(e))
+            console.log(this.pullDatas)
         },
 
         // 执行接口用例
