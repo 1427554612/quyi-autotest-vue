@@ -1,46 +1,41 @@
 <template>
     <div>
 
-        <el-card class="box-card" style="width:98%;margin-left: 15px;margin-top: 10px;height: 200px;">
-            <div slot="header" class="clearfix">
-                <span style="font-size:20px;font-weight: bolder;">日志管理</span>
-                <div>
-
+        <el-card class="box-card" style="width:98%;margin-left: 15px;margin-top: 10px;height: 900px;">
+            <el-card id="card2" style="width:30%;margin-left: 15px;margin-top: 10px;float: left;">
+                <div slot="header" class="clearfix">
+                    <span style="font-size:20px;font-weight: bolder;">文件列表</span>
                 </div>
-            </div>
+                
+                <div>
+                    <!-- 日志文件树 -->
+                    <el-input placeholder="输入关键字进行过滤" v-model="filterText" style="width:350px"></el-input>
+                    <el-button  icon="el-icon-error" style="margin-left:5px" @click="filterText=''">重置</el-button>
+                </div>
+                
+              <div>
+                    <el-tree class="filter-tree" :data="logTree" :props="defaultProps" id="tree"  
+                        default-expand-all highlight-current :filter-node-method="filterNode"  
+                        ref="tree" style="margin-top:10px"  show-checkbox @node-click="findLogByFileName"
+                        @check-change="handleCheckChange">
+                    </el-tree>
+              </div>
+            </el-card>
+
+            <el-card  id="card3" class="box-card" style="width:68%;margin-top: 10px;float:right;margin-right: 17px;">
+                <div slot="header" class="clearfix">
+                    <span style="font-size:20px;font-weight: bolder;">日志详情</span>
+                </div>
+                <!-- 富文本框  -->
+                <el-form ref="form11" :model="testText" label-width="80px" id="table"  >
+                    <quill-editor class="editor" ref="myTextEditor" v-model="content" :options="editorOption"
+                        @blur="onEditorBlur($event)" @focus="onEditorFocus($event)" @ready="onEditorReady($event)" @change="onEditorChange($event)">
+                    </quill-editor>
+                </el-form>
+            </el-card>
         </el-card>
 
-        <el-card class="box-card" style="width:30%;margin-left: 15px;margin-top: 10px;float: left;">
-            <div slot="header" class="clearfix">
-                <span style="font-size:20px;font-weight: bolder;">文件列表</span>
-            </div>
-            
-            <div>
-                <!-- 日志文件树 -->
-                <el-input placeholder="输入关键字进行过滤" v-model="filterText" style="width:350px"></el-input>
-                <el-button  icon="el-icon-error" style="margin-left:5px" @click="filterText=''">重置</el-button>
-            </div>
-            
-           <div>
-                <el-tree class="filter-tree" :data="logTree" :props="defaultProps" id="tree"  
-                    default-expand-all highlight-current :filter-node-method="filterNode"  
-                    ref="tree" style="margin-top:10px"  show-checkbox @node-click="findLogByFileName"
-                    @check-change="handleCheckChange">
-                </el-tree>
-           </div>
-        </el-card>
-
-        <el-card  id="card3" class="box-card" style="width:68%;margin-top: 10px;float:right;margin-right: 17px;">
-            <div slot="header" class="clearfix">
-                <span style="font-size:20px;font-weight: bolder;">日志详情</span>
-            </div>
-            <!-- 富文本框  -->
-            <el-form ref="form11" :model="testText" label-width="80px" id="table" >
-                <quill-editor class="editor" ref="myTextEditor" v-model="content" :options="editorOption" 
-                    @blur="onEditorBlur($event)" @focus="onEditorFocus($event)" @ready="onEditorReady($event)" @change="onEditorChange($event)">
-                </quill-editor>
-            </el-form>
-        </el-card>
+        
 
 
     </div>
@@ -151,11 +146,11 @@ export default{
   min-width: 100%;
 } */
 
-#card3{
-    height: 793px; 
+#card2{
+    height: 850px; 
 }
-#textarea{
-    height: 700px;
+#card3{
+    height: 850px; 
 }
 
 .editor {

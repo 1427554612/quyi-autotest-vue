@@ -142,26 +142,58 @@
 
 
         <!-- 推送监控,折叠面板方式 -->
-        <el-drawer :visible.sync="drawerIsView" direction="rtl" :before-close="handleClose" title="运行监控" modal="true" size="50%">
+        <el-drawer :visible.sync="drawerIsView" direction="rtl" :before-close="handleClose" title="执行结果" modal="true" size="50%">
             <div style=" overflow:scroll; height: 850px;">
                 <el-collapse v-model="activeNames" @change="handleChange" style="width:95%;margin-left:20px">
                     <el-collapse-item :title="item.caseName"  style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;" v-for="(item) in pullDatas" :key="item" >
                         <div>
                             <span style="font-weight:bold;color: #3555BC;"><a href="Javascript:void(0)">{{ item.caseName }}</a></span>
-                            <el-tag type="success" style="margin-left:22%" size="mini">200</el-tag>
-                            <el-tag type="success" style="margin-left:22%" size="mini">{{item.runResult == 1 ? "成功" : "失败"}}</el-tag>
-                            <el-tag type="success" style="margin-left:22%" size="mini">{{item.runTime}}ms</el-tag>
+                            <el-tag :type="item.resultData && item.resultData.code === 200 ? 'success': 'danger'" style="margin-left:22%" size="mini">{{ item.resultData && item.resultData.code }}</el-tag>
+                            <el-tag :type="item.runResult ==1 ? 'success': 'danger'" style="margin-left:22%" size="mini">{{item.runResult == 1 ? "成功" : "失败"}}</el-tag>
+                            <el-tag  style="margin-left:22%" size="mini">{{item.runTime}}ms</el-tag>
                         </div>
                         <el-collapse v-model="activeNames" @change="handleChange" style="width:95%;margin-left:20px">
-                            <el-collapse-item title="request"  style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;">
-                                <!-- <div style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;width:98%;height: 500px;">{{ item.datas &&  item.datas.requestBody}}</div> -->
-                                <vue-json-editor :value="item.datas&&JSON.parse(item.datas.requestBody)" :showBtns="false" :mode="'code'"
-                                    @json-change="onJsonChange" @json-save="onJsonSave" @has-error="onError" />
+                            <el-collapse-item title="请求数据"  style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;">
+                                <el-tabs v-model="activeName" @tab-click="handleClick"  type="border-card">
+                                    <el-tab-pane label="请求标头" name="first">
+                                        <H3>请求标头</H3>
+                                         <!-- <div style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;width:98%;height: 500px;">{{ item.datas &&  item.datas.requestBody}}</div> -->
+                                         <vue-json-editor :value="item.datas && JSON.parse(item.datas.requestHeaders)" :showBtns="false" :mode="'code'"
+                                            @json-change="onJsonChange" @json-save="onJsonSave" @has-error="onError" style="width: 95%;"/>
+                                    </el-tab-pane>
+                                    <el-tab-pane label="请求正文" name="second">
+                                        <H3>请求参数</H3>
+                                         <!-- <div style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;width:98%;height: 500px;">{{ item.datas &&  item.datas.requestBody}}</div> -->
+                                        <vue-json-editor :value="item.datas && JSON.parse(item.datas.requestBody)" :showBtns="false" :mode="'code'"
+                                            @json-change="onJsonChange" @json-save="onJsonSave" @has-error="onError" style="width: 95%;"/>
+                                    </el-tab-pane>
+                                </el-tabs>
                             </el-collapse-item>
-                            <el-collapse-item title="response"  style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;">
-                                <!-- <div style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;width:98%;height: 500px;" >{{ item.resultData }}</div> -->
-                                <vue-json-editor :value="item.resultData" :showBtns="false" :mode="'code'"
-                                    @json-change="onJsonChange" @json-save="onJsonSave" @has-error="onError" />
+                            <el-collapse-item title="响应数据"  style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;">
+                                <el-tabs v-model="activeName" @tab-click="handleClick" type="border-card">
+                                    <el-tab-pane label="响应标头" name="one">
+                                        <H3>响应标头</H3>
+                                        <!-- <div style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;width:98%;height: 500px;">{{ item.datas &&  item.datas.requestBody}}</div> -->
+                                        <vue-json-editor :value="item.resultData && item.resultData.responseHeader" :showBtns="false" :mode="'code'"
+                                            @json-change="onJsonChange" @json-save="onJsonSave" @has-error="onError" style="width: 95%;"/>
+                                    </el-tab-pane>
+                                    <el-tab-pane label="响应正文" name="two">
+                                        <H3>响应正文</H3>
+                                         <!-- <div style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;width:98%;height: 500px;">{{ item.datas &&  item.datas.requestBody}}</div> -->
+                                        <vue-json-editor :value="item.resultData && item.resultData.responseBody" :showBtns="false" :mode="'code'"
+                                            @json-change="onJsonChange" @json-save="onJsonSave" @has-error="onError" style="width: 95%;"/>
+                                    </el-tab-pane>
+                                    <el-tab-pane label="执行日志" name="three">
+                                        <H3>执行日志</H3>
+                                         <!-- <div style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;width:98%;height: 500px;">{{ item.datas &&  item.datas.requestBody}}</div> -->
+                                        <!-- <vue-json-editor :value="item.resultLog" :showBtns="false" :mode="'code'"
+                                            @json-change="onJsonChange" @json-save="onJsonSave" @has-error="onError" style="width: 95%;"/> -->
+                                             <!-- 富文本框  -->
+                                            <quill-editor class="editor" ref="myTextEditor" v-model="item.resultLog" :options="editorOption"
+                                                @blur="onEditorBlur($event)" @focus="onEditorFocus($event)" @ready="onEditorReady($event)" @change="onEditorChange($event)">
+                                        </quill-editor>
+                                    </el-tab-pane>
+                                </el-tabs>
                             </el-collapse-item>
                         </el-collapse>
                     </el-collapse-item>

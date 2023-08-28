@@ -27,7 +27,7 @@
                                 <el-input v-model="resultQueryVo.case_name" placeholder="用例名称"></el-input>
                             </el-form-item>
                             <el-form-item label="配置类型" >
-                                <el-select v-model="resultQueryVo.case_type" placeholder="结果类型">
+                                <el-select v-model="resultQueryVo.resultType" placeholder="结果类型">
                                     <el-option label="api" value="api"></el-option>
                                     <el-option label="web-ui" value="post"></el-option>
                                     <el-option label="phone-ui" value="phone-ui"></el-option>
@@ -46,41 +46,45 @@
                     </div>
                         <div>
                             <el-table :data="resultList" style="width: 100%;margin-top: 10px;"  height="500" border  max-height="600">
-                                <el-table-column fixed prop="result_id" label="结果id" width="180"> 
+                                <el-table-column fixed prop="resultId" label="结果id" width="180"> 
                                     <template slot-scope="scope" >
-                                        <router-link :to="'/result-info-list/'+scope.row.result_id" style = "text-decoration: underline ; color :blue;">
-                                            {{ scope.row.result_id }}
+                                        <router-link :to="'/result-info-list/'+scope.row.resultId" style = "text-decoration: underline ; color :blue;">
+                                            {{ scope.row.resultId }}
                                         </router-link>
                                     </template>
                                 </el-table-column>
-                                <el-table-column prop="case_name" label="用例名称" width="200"> </el-table-column>
-                                <el-table-column prop="case_title" label="用例标题" width="200"> </el-table-column>
-                                <el-table-column prop="last_run_platform" label="最近执行平台" width="200"></el-table-column>
-                                <el-table-column prop="case_type" label="用例类型" width="100">
+                                <el-table-column prop="caseName" label="用例名称" width="200"> </el-table-column>
+                                <el-table-column prop="caseTitle" label="用例标题" width="200">
                                     <template scope="scope">
-                                        <el-tag style="font-size:15px" v-if="scope.row.case_type==='api'">{{ scope.row.case_type }}</el-tag>
-                                        <el-tag style="font-size:15px" type="success" v-if="scope.row.case_type==='web-ui'">{{ scope.row.case_type }}</el-tag>
-                                        <el-tag style="font-size:15px" type="info" v-if="scope.row.case_type==='phone-ui'">{{ scope.row.case_type }}</el-tag>
-                                        <el-tag style="font-size:15px" type="warning" v-if="scope.row.case_type==='performance'">{{ scope.row.case_type }}</el-tag>
+                                        {{ scope.row.datas.caseTitle }}
                                     </template>
                                 </el-table-column>
-                                <el-table-column prop="run_num" label="执行总数" width="100"> </el-table-column>
-                                <el-table-column prop="run_success_num" label="成功总数" width="100"> </el-table-column>
-                                <el-table-column prop="run_error_num" label="失败总数" width="100"> </el-table-column>
-                                <el-table-column prop="run_success_rate" label="执行成功率" width="100">
+                                <el-table-column prop="configName" label="最近执行平台" width="200"></el-table-column>
+                                <el-table-column prop="resultType" label="用例类型" width="100">
+                                    <template scope="scope">
+                                        <el-tag style="font-size:15px" v-if="scope.row.resultType==='api'">{{ scope.row.resultType }}</el-tag>
+                                        <el-tag style="font-size:15px" type="success" v-if="scope.row.resultType==='web-ui'">{{ scope.row.resultType }}</el-tag>
+                                        <el-tag style="font-size:15px" type="info" v-if="scope.row.resultType==='phone-ui'">{{ scope.row.resultType }}</el-tag>
+                                        <el-tag style="font-size:15px" type="warning" v-if="scope.row.resultType==='performance'">{{ scope.row.resultType }}</el-tag>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="runNum" label="执行总数" width="100"> </el-table-column>
+                                <el-table-column prop="runSuccessNum" label="成功总数" width="100"> </el-table-column>
+                                <el-table-column prop="runErrorNum" label="失败总数" width="100"> </el-table-column>
+                                <el-table-column prop="runSuccessRate" label="执行成功率" width="100">
                                     <template slot-scope="scope">{{ scope.row.run_success_rate }}%</template>
                                 </el-table-column>
-                                <el-table-column prop="last_run_result" label="最近执行结果" width="120"> 
+                                <el-table-column prop="lastRunResult" label="最近执行结果" width="120"> 
                                     <template slot-scope="scope">
-                                        <el-tag type="success" style="font-size:15px" v-if="scope.row.last_run_result === true">成功</el-tag>
-                                        <el-tag type="danger" style="font-size:15px" v-if="scope.row.last_run_result === false">失败</el-tag>
+                                        <el-tag type="success" style="font-size:15px" v-if="scope.row.lastRunResult === true">成功</el-tag>
+                                        <el-tag type="danger" style="font-size:15px" v-if="scope.row.lastRunResult === false">失败</el-tag>
                                     </template>
                                 </el-table-column>
-                                <el-table-column prop="last_run_date" label="最近执行时间" width="180"> </el-table-column>
-                                <el-table-column prop="last_run_time" label="最近执行耗时(ms)" width="140"> </el-table-column>
-                                <el-table-column prop="response_data" label="响应数据" width="180" style="" align=center>
+                                <el-table-column prop="lastRunDate" label="最近执行时间" width="180"> </el-table-column>
+                                <el-table-column prop="lastRunTime" label="最近执行耗时(ms)" width="140"> </el-table-column>
+                                <el-table-column prop="resultData" label="响应数据" width="180" style="" align=center>
                                     <template slot-scope="scope">
-                                        <el-button type="primary" size="mini" icon="" @click="showResponseDataDialog(scope.row.response_data)">查看</el-button>
+                                        <el-button type="primary" size="mini" icon="" @click="showResponseDataDialog(scope.row.resultData)">查看</el-button>
                                     </template>
                                 </el-table-column>
                             </el-table>
@@ -110,7 +114,7 @@
             <!-- 响应正文弹框 -->
             <el-dialog title="接口响应" :visible.sync="dialogVisible" width="50%" :before-close="handleClose" >
                 <div style="width: 95%; margin-left: 20px;margin-top: 10px;">
-                    <vue-json-editor v-model="response_data" :showBtns="false" :mode="'code'"
+                    <vue-json-editor v-model="responseData" :showBtns="false" :mode="'code'"
                         @json-change="onJsonChange" @json-save="onJsonSave" @has-error="onError"  style="padding"/>
                 </div>
                 <span slot="footer" class="dialog-footer">
@@ -134,9 +138,9 @@ export default{
     data(){
         return {
             resultQueryVo:{
-                result_id:"",
-                case_type:"",
-                case_name:""
+                resultId:"",
+                resultType:"",
+                caseName:""
             },
             current:1,
             size:10,
@@ -155,7 +159,7 @@ export default{
                 legends:[],
                 series:[]
             },
-            response_data:{},   // 响应数据
+            responseData:{},   // 响应数据
             dialogVisible:false,
             current_run_sum_time:0
         }
@@ -412,9 +416,9 @@ export default{
         },
 
         // 打开响应弹框
-        showResponseDataDialog(response_data){
+        showResponseDataDialog(responseData){
             this.dialogVisible = true
-            this.response_data = response_data
+            this.responseData = responseData
         }
 
     }
