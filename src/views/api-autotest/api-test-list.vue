@@ -145,7 +145,7 @@
         <el-drawer :visible.sync="drawerIsView" direction="rtl" :before-close="handleClose" title="执行结果" modal="true" size="50%">
             <div style=" overflow:scroll; height: 850px;">
                 <el-collapse v-model="activeNames" @change="handleChange" style="width:95%;margin-left:20px">
-                    <el-collapse-item :title="item.caseName"  style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;" v-for="(item) in pullDatas" :key="item" >
+                    <el-collapse-item title="执行数据"  style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;" v-for="(item) in pullDatas" :key="item" >
                         <div>
                             <span style="font-weight:bold;color: #3555BC;"><a href="Javascript:void(0)">{{ item.caseName }}</a></span>
                             <el-tag :type="item.resultData && item.resultData.code === 200 ? 'success': 'danger'" style="margin-left:22%" size="mini">{{ item.resultData && item.resultData.code }}</el-tag>
@@ -157,13 +157,11 @@
                                 <el-tabs v-model="activeName" @tab-click="handleClick"  type="border-card">
                                     <el-tab-pane label="请求标头" name="first">
                                         <H3>请求标头</H3>
-                                         <!-- <div style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;width:98%;height: 500px;">{{ item.datas &&  item.datas.requestBody}}</div> -->
                                          <vue-json-editor :value="item.datas && JSON.parse(item.datas.requestHeaders)" :showBtns="false" :mode="'code'"
                                             @json-change="onJsonChange" @json-save="onJsonSave" @has-error="onError" style="width: 95%;"/>
                                     </el-tab-pane>
                                     <el-tab-pane label="请求正文" name="second">
                                         <H3>请求参数</H3>
-                                         <!-- <div style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;width:98%;height: 500px;">{{ item.datas &&  item.datas.requestBody}}</div> -->
                                         <vue-json-editor :value="item.datas && JSON.parse(item.datas.requestBody)" :showBtns="false" :mode="'code'"
                                             @json-change="onJsonChange" @json-save="onJsonSave" @has-error="onError" style="width: 95%;"/>
                                     </el-tab-pane>
@@ -173,22 +171,16 @@
                                 <el-tabs v-model="activeName" @tab-click="handleClick" type="border-card">
                                     <el-tab-pane label="响应标头" name="one">
                                         <H3>响应标头</H3>
-                                        <!-- <div style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;width:98%;height: 500px;">{{ item.datas &&  item.datas.requestBody}}</div> -->
                                         <vue-json-editor :value="item.resultData && item.resultData.responseHeader" :showBtns="false" :mode="'code'"
                                             @json-change="onJsonChange" @json-save="onJsonSave" @has-error="onError" style="width: 95%;"/>
                                     </el-tab-pane>
                                     <el-tab-pane label="响应正文" name="two">
                                         <H3>响应正文</H3>
-                                         <!-- <div style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;width:98%;height: 500px;">{{ item.datas &&  item.datas.requestBody}}</div> -->
                                         <vue-json-editor :value="item.resultData && item.resultData.responseBody" :showBtns="false" :mode="'code'"
                                             @json-change="onJsonChange" @json-save="onJsonSave" @has-error="onError" style="width: 95%;"/>
                                     </el-tab-pane>
                                     <el-tab-pane label="执行日志" name="three">
                                         <H3>执行日志</H3>
-                                         <!-- <div style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;width:98%;height: 500px;">{{ item.datas &&  item.datas.requestBody}}</div> -->
-                                        <!-- <vue-json-editor :value="item.resultLog" :showBtns="false" :mode="'code'"
-                                            @json-change="onJsonChange" @json-save="onJsonSave" @has-error="onError" style="width: 95%;"/> -->
-                                             <!-- 富文本框  -->
                                             <quill-editor class="editor" ref="myTextEditor" v-model="item.resultLog" :options="editorOption"
                                                 @blur="onEditorBlur($event)" @focus="onEditorFocus($event)" @ready="onEditorReady($event)" @change="onEditorChange($event)">
                                         </quill-editor>
@@ -533,11 +525,11 @@ export default {
             this.pullDatas = [];      // 清空通信数据
             this.drawerIsView = true
             // 批量执行
-            this.$message({
+            await this.$message({
                     type:"success",
                     message:"开始执行用例......"
                 })
-                apiTestApi.selectRunCase(this.selectCaseList,this.selectTestConfigId).then(response=>{
+                await apiTestApi.selectRunCase(this.selectCaseList,this.selectTestConfigId).then(response=>{
                     this.$notify({
                         title: '成功',
                         message: '执行完毕...',

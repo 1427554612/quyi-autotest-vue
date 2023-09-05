@@ -213,8 +213,8 @@ export default{
                 let resultList = response.data.list;
                 let size = resultList.length;
                 for(let i = 0;i<size;++i){
-                    console.log(resultList[i].last_run_time)
-                    runTimeSum = runTimeSum + resultList[i].last_run_time
+                    console.log(resultList[i].lastRunTime)
+                    runTimeSum = runTimeSum + resultList[i].lastRunTime
                 }
                 this.current_run_sum_time = runTimeSum
             })  

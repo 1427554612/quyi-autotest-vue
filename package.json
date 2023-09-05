@@ -20,7 +20,7 @@
     "core-js": "3.6.5",
     "cronstrue": "^2.27.0",
     "echarts": "^5.4.2",
-    "element-ui": "2.13.2",
+    "element-ui": "^2.15.14",
     "js-cookie": "2.2.0",
     "luckyexcel": "^1.0.1",
     "normalize.css": "7.0.0",
