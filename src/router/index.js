@@ -80,6 +80,20 @@ export const constantRoutes = [
         component: () => import('@/views/test-config/config-add'),
         meta: { title: '编辑测试配置', icon: 'tree' },
         hidden:true
+      },
+      {
+        path: `/param-list`,
+        name: '参数化管理',
+        component: () => import('@/views/test-config/param-list'),
+        meta: { title: '参数化管理', icon: 'tree' },
+        hidden:false
+      },
+      {
+        path: `/module-list`,
+        name: '内部模块管理',
+        component: () => import('@/views/test-config/module-list'),
+        meta: { title: '内部模块管理', icon: 'tree' },
+        hidden:false
       }
     ]
   },
