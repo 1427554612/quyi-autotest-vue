@@ -207,7 +207,6 @@ export default{
 
         // 获取总执行时间
         getCurrentRunTime(){
-            console.log("1111111111111111111111111111111")
             let runTimeSum = 0
             testResultApi.findAllResult().then(response=>{
                 let resultList = response.data.list;

@@ -20,6 +20,9 @@ import VueQuillEditor from 'vue-quill-editor'//调用编辑器
 //全局引入echarts
 import * as echarts from 'echarts';
 
+import CodeEditor from 'bin-code-editor';
+import 'bin-code-editor/lib/styles/index.css';
+
 
 // 样式
 import 'quill/dist/quill.core.css'
@@ -46,6 +49,7 @@ Vue.use(ElementUI, { locale })
 // Vue.use(ElementUI)
 Vue.use(VueCron);
 Vue.use(VueQuillEditor)
+Vue.use(CodeEditor)
 
 //需要挂载到Vue原型上
 Vue.prototype.$echarts = echarts

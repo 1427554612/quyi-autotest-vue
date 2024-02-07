@@ -112,6 +112,12 @@ export const constantRoutes = [
         meta: { title: '接口用例列表', icon: 'table' }
       },
       {
+        path: '/api-test-save',
+        name: '添加测试用例',
+        component: () => import('@/views/api-autotest/api-test-save'),
+        meta: { title: '添加测试用例', icon: 'table' }
+      },
+      {
         path: '/api-test-edit',
         name: '编辑测试用例',
         component: () => import('@/views/api-autotest/api-test-edit'),

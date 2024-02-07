@@ -68,7 +68,7 @@
                         <div id="rigth">
                             <div style="overflow:scroll;height:850px">
                                 <el-collapse v-model="one_activeNames" @change="handleChange" style="width:95%;margin-left:20px">
-                                    <el-collapse-item name="1" :title="resultInfoData.caseName"  style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;"  >
+                                    <el-collapse-item name="1" :title="collapseTitle"  style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;"  >
                                         <el-collapse v-model="two_activeNames" @change="handleChange" style="width:95%;margin-left:20px">
                                             <el-collapse-item  title="请求数据"  style="box-shadow: 2px 2px 5px #bbb;padding-left: 10px;margin-top: 10px;">
                                                 <el-tabs v-model="zzzz" @tab-click="handleClick"  type="border-card">
@@ -131,6 +131,7 @@ export default {
   data(){
     return{
         resultId :"",
+        collapseTitle:"",
         paneSize:50,
         resultInfoList:[],
         current:1,
@@ -180,25 +181,28 @@ export default {
         await testResultApi.findAllResultInfo(this.resultId,this.current,this.size).then(response=>{
             this.resultInfoList = response.data.list;
             this.total = response.data.total
-            // TODO:获取成功总数和失败总数
-            testResultApi.findById(this.resultId).then(response=>{
-                this.successTotal = response.data.data.runSuccessNum
-                this.errorTotal = response.data.data.runErrorNum
-            })
-            // TODO:获取总共运行时长和平均运行时长
-            testResultApi.findResultInfoList(this.resultId,1).then(response=>{
-                response.data.list.forEach((item)=>{
-                    this.runTime+=item.runTime
-                })
-                this.avgRunTime = (this.runTime / response.data.list.length).toFixed(2)
-            }) 
         })
+
+        // TODO:获取成功总数和失败总数
+        await testResultApi.findById(this.resultId).then(response=>{
+            this.successTotal = response.data.data.runSuccessNum
+            this.errorTotal = response.data.data.runErrorNum
+            console.log("成功总数：" + this.successTotal  + ",失败总数：" + this.errorTotal)
+        })
+        // TODO:获取总共运行时长和平均运行时长
+        await testResultApi.findResultInfoList(this.resultId,1).then(response=>{
+            response.data.list.forEach((item)=>{
+                this.runTime+=item.runTime
+            })
+            this.avgRunTime = (this.runTime / response.data.list.length).toFixed(2)
+        }) 
     },
 
     // 点击结果详情id,设置当前数据
     setData(data){
         this.resultInfoData = data
         console.log(this.resultInfoData)
+        this.collapseTitle = this.resultInfoData.caseName+":"+this.resultInfoData.resultInfoId
     }
 
   }
